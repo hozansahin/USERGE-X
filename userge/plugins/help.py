@@ -22,15 +22,15 @@ from userge import userge, Message, Config, get_collection, versions, get_versio
 
 
 _CATEGORY = {
-    'admin': '🙋🏻‍♂️',
-    'fun': '🎨',
+    'Yönetim': '🙋🏻‍♂️',
+    'Eğlence': '🎨',
     'misc': '🧩',
-    'tools': '🧰',
+    'Araçlar': '🧰',
     'utils': '🗂',
     'unofficial': '➕',
     'temp': '♻️',
-    'plugins': '💎',
-    'inline' : '🔰' 
+    'Eklentiler': '💎',
+    'Satır içi' : '🔰' 
 }
 # Database
 SAVED_SETTINGS = get_collection("CONFIGS")
@@ -42,9 +42,9 @@ REPO_X = InlineQueryResultArticle(
                     id=uuid4(),
                     title="Repo",
                     input_message_content=InputTextMessageContent(
-                        "**Here's how to setup USERGE-X** "),
+                        "**USERGE-X'i buradan kurabilirsin** "),
                     url="https://github.com/code-rgb/USERGE-X",
-                    description="Setup Your Own",
+                    description="Kendi Botunu kur",
                     thumb_url="https://i.imgur.com/1xsOo9o.png",
                     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(                  
                                     "🔥 USERGE-X Repo",
@@ -64,7 +64,7 @@ ALIVE_IMGS = ["https://telegra.ph/file/11123ef7dff2f1e19e79d.jpg", "https://i.im
 "https://telegra.ph/file/86cc25c78ad667ca5e691.png"]
 
 ALIVE_INFO = f"""
-  **[USERGE-X](https://github.com/code-rgb/USERGE-X) is Up and Running 🏃**
+  **[USERGE-X](https://github.com/code-rgb/USERGE-X) Hazır ve Çalışıyor🏃**
 
  • 🐍 Python :  `v{versions.__python_version__}`
  • 🔥 Pyrogram :  `v{versions.__pyro_version__}`
@@ -77,11 +77,11 @@ async def _init() -> None:
         Config.USE_USER_FOR_CLIENT_CHECKS = bool(data['is_user'])
 
 
-@userge.on_cmd("help", about={'header': "Guide to use USERGE commands"}, allow_channels=False)
+@userge.on_cmd("help", about={'header': "Userge Komut Açıklamaları"}, allow_channels=False)
 async def helpme(message: Message) -> None:  # pylint: disable=missing-function-docstring
     plugins = userge.manager.enabled_plugins
     if not message.input_str:
-        out_str = f"""⚒ <b><u>(<code>{len(plugins)}</code>) Plugin(s) Available</u></b>\n\n"""
+        out_str = f"""⚒ <b><u>(<code>{len(plugins)}</code>) Eklenti mevcut</u></b>\n\n"""
         cat_plugins = userge.manager.get_all_plugins()
         for cat in sorted(cat_plugins):
             if cat == "plugins":
@@ -89,7 +89,7 @@ async def helpme(message: Message) -> None:  # pylint: disable=missing-function-
             out_str += (f"    {_CATEGORY.get(cat, '📁')} <b>{cat}</b> "
                         f"(<code>{len(cat_plugins[cat])}</code>) :   <code>"
                         + "</code>    <code>".join(sorted(cat_plugins[cat])) + "</code>\n\n")
-        out_str += f"""📕 <b>Usage:</b>  <code>{Config.CMD_TRIGGER}help [plugin_name]</code>"""
+        out_str += f"""📕 <b>Kullanım:</b>  <code>{Config.CMD_TRIGGER}help [plugin_name]</code>"""
     else:
         key = message.input_str
         if (not key.startswith(Config.CMD_TRIGGER)
