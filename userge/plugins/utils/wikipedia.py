@@ -11,22 +11,22 @@ from userge import userge, Message
 
 
 @userge.on_cmd("wiki", about={
-    'header': "do a Wikipedia search",
-    'flags': {'-l': "limit the number of returned results (defaults to 5)"},
-    'usage': "{tr}wiki [flags] [query | reply to msg]",
-    'examples': "{tr}wiki -l5 userge"})
+    'header': "Wikipedia'da Arama Yapın",
+    'flags': {'-l': " sonuçların sayısını sınırlayın (varsayılan olarak 5)"},
+    'usage': "{tr}wiki [parametre] [sorgu | veya mesajı cevapla]",
+    'examples': "{tr}wiki -l5 Türkiye"})
 async def wiki_pedia(message: Message):
-    await message.edit("Processing ...")
+    await message.edit("Arıyorum ...")
     query = message.filtered_input_str
     flags = message.flags
     limit = int(flags.get('-l', 5))
     if message.reply_to_message:
         query = message.reply_to_message.text
     if not query:
-        await message.err(text="Give a query or reply to a message to wikipedia!")
+        await message.err(text="Wikipedia için bir sorgu veya bir mesaja cevap verin!")
         return
     try:
-        wikipedia.set_lang("en")
+        wikipedia.set_lang("tr")
         results = wikipedia.search(query)
     except Exception as e:
         await message.err(text=e)
@@ -38,6 +38,6 @@ async def wiki_pedia(message: Message):
         output += f"🌏 [{s}]({url})\n"
         if i == limit:
             break
-    output = f"**Wikipedia Search:**\n`{query}`\n\n**Results:**\n{output}"
+    output = f"**Wikipedia da şunu aradım:**\n`{query}`\n\n**Şunları bulabildim:**\n{output}"
     await message.edit_or_send_as_file(text=output, caption=query,
                                        disable_web_page_preview=True)

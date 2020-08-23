@@ -23,7 +23,7 @@ from . import versions
 
 _REPO = Repo()
 _LOG = logging.getLogger(__name__)
-logbot.reply_last_msg("Setting Configs ...")
+logbot.reply_last_msg("Yapılandırma Ayarlanıyor ...")
 
 
 class Config:
@@ -80,11 +80,11 @@ class Config:
 
 
 if Config.HEROKU_API_KEY:
-    logbot.reply_last_msg("Checking Heroku App...", _LOG.info)
+    logbot.reply_last_msg("Heroku Uygulamasını Kontrol Ediyorum...", _LOG.info)
     for heroku_app in heroku3.from_key(Config.HEROKU_API_KEY).apps():
         if (heroku_app and Config.HEROKU_APP_NAME
                 and heroku_app.name == Config.HEROKU_APP_NAME):
-            _LOG.info("Heroku App : %s Found...", heroku_app.name)
+            _LOG.info(" %s isimli Heroku Uygulaması Bulundu...", heroku_app.name)
             Config.HEROKU_APP = heroku_app
             break
     logbot.del_last_msg()

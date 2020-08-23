@@ -35,7 +35,7 @@ async def progress(current: int,
             return
         del _TASKS[task_id]
         try:
-            await message.try_to_edit("`finalizing process ...`")
+            await message.try_to_edit("`işlem tamamlanıyor ...`")
         except FloodWait as f_e:
             time.sleep(f_e.x)
         return
@@ -52,10 +52,10 @@ async def progress(current: int,
         progress_str = \
             "__{}__ : `{}`\n" + \
             "```[{}{}]```\n" + \
-            "**Progress** : `{}%`\n" + \
-            "**Completed** : `{}`\n" + \
-            "**Total** : `{}`\n" + \
-            "**Speed** : `{}/s`\n" + \
+            "**İlerleme** : `{}%`\n" + \
+            "**Tamamlandı** : `{}`\n" + \
+            "**Toplam** : `{}`\n" + \
+            "**Hız** : `{}/s`\n" + \
             "**ETA** : `{}`"
         progress_str = progress_str.format(
             ud_type,
