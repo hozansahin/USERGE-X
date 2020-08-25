@@ -105,5 +105,5 @@ def get_version() -> str:
             if diff:
                 return f"{ver}-custom.{len(diff)}"
         except:
-            error = "Update repo to get version."
+            error = "Son Sürüm kullanmak için depoyu güncelleyin."
             return error
