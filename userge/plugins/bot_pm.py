@@ -22,13 +22,13 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         bot = await userge.bot.get_me()
         master = await userge.get_me()
         hello = f"""
-Hello [{message.from_user.first_name}](tg://user?id={message.from_user.id})",
-Nice To Meet You! I'm **@{bot.username}**
+Merhaba [{message.from_user.first_name}](tg://user?id={message.from_user.id})",
+Tanıştığıma memnun oldum! Ben **@{bot.username}**
 
-        A Bot Powered by **USERGE-X**
+      **USERGE-X**  Tarafından Desteklenen Bir Botum
 
-<i>You Can Contact My Master</i> - **{master.first_name}**
-<i>And Check The Repo For More Info.</i>
+**{master.first_name}** - <i> Sahibimle İletişime Geçebilirsiniz.</i>
+<i>Ve Daha Fazla Bilgi İçin Repo'yu Kontrol Edin</i>
 """
         u_n = master.username
         try:
@@ -56,7 +56,7 @@ Nice To Meet You! I'm **@{bot.username}**
             file_ref=fileref,
             caption=caption,
             reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("CONTACT", url=f"t.me/{u_n}"),
+                [[InlineKeyboardButton("İLETİŞİM", url=f"t.me/{u_n}"),
                 InlineKeyboardButton("REPO", url="https://github.com/code-rgb/USERGE-X")
                 ]]
             )
@@ -64,8 +64,8 @@ Nice To Meet You! I'm **@{bot.username}**
 
 
 @userge.on_cmd("bot_pm", about={
-    'header': "Module That Makes your bot to respond to /start"})
+    'header': "Botunuzun /start komutuna yanıt vermesini sağlayan modül"})
 async def op_(message: Message):
-    text = "**Works Only in Bot's PM**\n\n"
-    text += "<code>Do /start</code>"
+    text = "**Sadece BOT'un PM'sinde çalışır**\n\n"
+    text += "<code>kullanmak için botunuza /start yazın</code>"
     await message.edit(text, del_in=5)
