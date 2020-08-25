@@ -13,7 +13,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
     @ubot.on_callback_query(filters=Filters.regex(pattern=r"^secret_btn$"))
     async def alive_callback(_, callback_query: CallbackQuery): 
         sender = await userge.get_me()
-        msg = f"🔓 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 𝗳𝗿𝗼𝗺: {sender.first_name}"
+        msg = f"🔓 **{sender.first_name}** : tarafından gelen mesaj "
         if sender.last_name:
             msg += f" {sender.last_name}\n"
         else:
@@ -25,12 +25,12 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         if u_id == Config.OWNER_ID or u_id == receiver:
             await callback_query.answer(msg, show_alert=True)
         else:
-            await callback_query.answer("This Message is Confidential 👽", show_alert=True)
+            await callback_query.answer("Hey, Bekle! Bu mesaj aşırı gizlidir 👽", show_alert=True)
 
 @userge.on_cmd("secret", about={
-    'header': "send secret message via inline bot"})
+    'header': "Satır İçi Bot ile Gizli Mesaj Göndermenize yarar"})
 async def secret_(message: Message):
-    text = "**IN INLINE**\n\n"
-    text += "Do @yourbot secret @mention <Your Secret Message>"
+    text = "**YANLIZCA SATIR İÇİ !**\n\n"
+    text += "@botunuzunadi secret @behsedilen <Gizli mesajın>"
     await message.edit(text, del_in=10)
     

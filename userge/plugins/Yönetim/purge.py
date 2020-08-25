@@ -12,16 +12,16 @@ from userge import userge, Message
 
 
 @userge.on_cmd("purge", about={
-    'header': "purge messages from user",
+    'header': "Kullanıcı mesajlarını temizleme",
     'flags': {
-        '-u': "get user_id from replied message",
-        '-l': "message limit : max 100"},
-    'usage': "reply {tr}purge to the start message to purge.\n"
-             "use {tr}purge [user_id | user_name] to purge messages from that user or use flags",
+        '-u': "cevaplanan mesajdan user_id alır",
+        '-l': "Maksimum mesaj sınırı:  100"},
+    'usage': "temizlemek istediğiniz mesaja {tr}purge yazın.\n"
+             "{tr}purge [user_id | user_name] kullanıcısından gelen mesajları temizlemek için parametre kullanımı",
     'examples': ['{tr}purge', '{tr}purge -u', '{tr}purge [user_id | user_name]']},
     allow_bots=False, allow_private=False, del_pre=True)
 async def purge_(message: Message):
-    await message.edit("`purging ...`")
+    await message.edit("`Siliyorum...`")
     from_user_id = 0
     if message.filtered_input_str:
         from_user_id = (await message.client.get_users(message.filtered_input_str)).id
@@ -36,7 +36,7 @@ async def purge_(message: Message):
         if 'u' in message.flags:
             from_user_id = message.reply_to_message.from_user.id
     if not start_message:
-        await message.err("invalid start message!")
+        await message.err("Nereden Başlayacağımı belirtmelisin")
         return
     start_t = datetime.now()
     message_ids = range(start_message, message.message_id)
@@ -62,5 +62,5 @@ async def purge_(message: Message):
         purged_messages_count += len(list_of_messages_to_delete)
     end_t = datetime.now()
     time_taken_s = (end_t - start_t).seconds
-    out = f"<u>purged</u> {purged_messages_count} messages in {time_taken_s} seconds."
+    out = f"{purged_messages_count} Mesaj {time_taken_s} saniyede. <u>Temizlendi!</u> "
     await message.edit(out, del_in=3)
