@@ -3,7 +3,7 @@ import datetime
 from userge import userge
 import math
 
-@userge.on_cmd("yp$", about={'header': "Yıl durum Çubuğu})
+@userge.on_cmd("yp$", about={'header': "Yıl durum Çubuğu"})
 async def progresss(message):
     x = datetime.datetime.now()
     day = int(x.strftime("%j"))
