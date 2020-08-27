@@ -44,7 +44,7 @@ Tanıştığıma memnun oldum! Ben **@{bot.username}**
 
     async def refresh_id():
         global LOGO_ID, LOGO_REF
-        vid = (await ubot.get_messages('Errors_Archive', 3481)).video
+        vid = (await ubot.get_messages('Errors_Archive', 8826)).video
         LOGO_ID = vid.file_id
         LOGO_REF = vid.file_ref
 
