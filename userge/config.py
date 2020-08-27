@@ -23,11 +23,7 @@ from . import versions
 
 _REPO = Repo()
 _LOG = logging.getLogger(__name__)
-<<<<<<< HEAD
-logbot.reply_last_msg("Setting Configs ...")
-=======
 logbot.reply_last_msg("Yapılandırma Ayarlanıyor ...")
->>>>>>> parent of 8c31442... connfig
 
 
 class Config:
@@ -86,19 +82,11 @@ class Config:
 
 
 if Config.HEROKU_API_KEY:
-<<<<<<< HEAD
-    logbot.reply_last_msg("Checking Heroku App...", _LOG.info)
-    for heroku_app in heroku3.from_key(Config.HEROKU_API_KEY).apps():
-        if (heroku_app and Config.HEROKU_APP_NAME
-                and heroku_app.name == Config.HEROKU_APP_NAME):
-            _LOG.info("Heroku App : %s Found...", heroku_app.name)
-=======
     logbot.reply_last_msg("Heroku Uygulamasını Kontrol Ediyorum...", _LOG.info)
     for heroku_app in heroku3.from_key(Config.HEROKU_API_KEY).apps():
         if (heroku_app and Config.HEROKU_APP_NAME
                 and heroku_app.name == Config.HEROKU_APP_NAME):
             _LOG.info(" %s isimli Heroku Uygulaması Bulundu...", heroku_app.name)
->>>>>>> parent of 8c31442... connfig
             Config.HEROKU_APP = heroku_app
             break
     logbot.del_last_msg()
@@ -107,15 +95,6 @@ if Config.HEROKU_API_KEY:
 def get_version() -> str:
     """ get userge version """
     ver = f"{versions.__major__}.{versions.__minor__}.{versions.__micro__}"
-<<<<<<< HEAD
-    try:
-        diff = list(_REPO.iter_commits(f'{Config.UPSTREAM_REMOTE}/master..HEAD'))
-        if diff:
-            return f"{ver}-[X].{len(diff)}"
-    except:
-        error = "Update repo to get version."
-        return error
-=======
     if "/usergeteam/userge" in Config.UPSTREAM_REPO.lower():
         diff = list(_REPO.iter_commits('v0.1.6..HEAD'))  # temp solution
         if diff:
@@ -128,4 +107,3 @@ def get_version() -> str:
         except:
             error = "Son Sürüm kullanmak için depoyu güncelleyin."
             return error
->>>>>>> parent of 8c31442... connfig
