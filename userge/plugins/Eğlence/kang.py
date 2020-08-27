@@ -27,7 +27,7 @@ from userge import userge, Message, Config
         'header': "Stikır çıkartmaları dızlar 🤠",
         'usage': "Bir çıkartmaya {tr}kang [emoji (ler)] [paket numarası] yazın veya  "
                  "fotoğraf göndermen gerek!",
-        'examples': [""{tr}kang", "{tr}kang 🤔", "{tr}kang 2", "{tr}kang 🤠 2"]},
+        'examples': ["{tr}kang", "{tr}kang 🤔", "{tr}kang 2", "{tr}kang 🤠 2"]},
     allow_channels=False, allow_via_bot=False)
 async def kang_(message: Message):
     """ Stikır dızla """
