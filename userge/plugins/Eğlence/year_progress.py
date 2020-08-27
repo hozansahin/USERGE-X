@@ -3,7 +3,7 @@ import datetime
 from userge import userge
 import math
 
-@userge.on_cmd("yp$", about={'header': "Year Progress Bar"})
+@userge.on_cmd("yp$", about={'header': "Yıl durum Çubuğu})
 async def progresss(message):
     x = datetime.datetime.now()
     day = int(x.strftime("%j"))
@@ -36,7 +36,7 @@ async def progresss(message):
     "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
     ]
 
-    message_out  =   "<b>Year Progress</b>\n"
+    message_out  =   "<b>Yılın durumu</b>\n"
     message_out  += f"<code>{progress[num]} {percent}</code>"
     message_out  +=  "`%`"
     await message.edit(message_out)

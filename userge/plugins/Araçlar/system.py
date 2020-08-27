@@ -1,4 +1,4 @@
-""" system commands """
+""" sistem komutları """
 # Copyright (C) 2020 by UsergeTeam@Github, < https://github.com/UsergeTeam >.
 #
 # This file is part of < https://github.com/UsergeTeam/Userge > project,
@@ -33,7 +33,7 @@ async def _init() -> None:
 
 
 @userge.on_cmd('restart', about={
-    'header': "Restarts the bot and reload all plugins",
+    'header': "Botu Yeniden Başlatır ve Tüm Eklentileri Yeniden Yükler",
     'flags': {
         '-h': "restart heroku dyno",
         '-t': "clean temp loaded plugins",

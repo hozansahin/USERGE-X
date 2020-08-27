@@ -10,17 +10,17 @@ from userge import userge, Message
 
 
 @userge.on_cmd("s", about={
-    'header': "search commands in USERGE",
+    'header': "USERGE komutlarında arayın",
     'examples': "{tr}s wel"}, allow_channels=False)
 async def search(message: Message):
     cmd = message.input_str
     if not cmd:
-        await message.err(text="Enter any keyword to search in commands")
+        await message.err(text="Komutlarda arama yapmak için herhangi bir anahtar kelime girin")
         return
     found = [i for i in sorted(list(userge.manager.enabled_commands)) if cmd in i]
     out_str = '    '.join(found)
     if found:
-        out = f"**--I found ({len(found)}) commands for-- : `{cmd}`**\n\n`{out_str}`"
+        out = f"** `{cmd}` : --için ({len(found)}) komut buldum--**\n\n`{out_str}`"
     else:
-        out = f"__command not found for__ : `{cmd}`"
+        out = f"`{cmd}`: __için komut bulunamadı__  "
     await message.edit(text=out, del_in=0)

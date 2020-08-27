@@ -9,8 +9,8 @@
 from userge import userge, Message, Config, versions, get_version
 
 
-@userge.on_cmd("repo", about={'header': "get repo link and details"})
+@userge.on_cmd("repo", about={'header': "repo URL'si ve kullanım klavuzu"})
 async def see_repo(message: Message):
-    """see repo"""
+    """depoyu görüntüle"""
     output = f"• **repo** : [USERGE-X]({Config.UPSTREAM_REPO})"
     await message.edit(output)

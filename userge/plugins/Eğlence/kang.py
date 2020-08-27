@@ -1,4 +1,4 @@
-""" kang stickers """
+""" Son Sticker Bükücü """
 
 # Copyright (C) 2020 by UsergeTeam@Github, < https://github.com/UsergeTeam >.
 #
@@ -24,13 +24,13 @@ from userge import userge, Message, Config
 
 @userge.on_cmd(
     "kang", about={
-        'header': "kangs stickers or creates new ones",
-        'usage': "Reply {tr}kang [emoji('s)] [pack number] to a sticker or "
-                 "an image to kang it to your userbot pack.",
-        'examples': ["{tr}kang", "{tr}kang 🤔", "{tr}kang 2", "{tr}kang 🤔 2"]},
+        'header': "Stikır çıkartmaları dızlar 🤠",
+        'usage': "Bir çıkartmaya {tr}kang [emoji (ler)] [paket numarası] yazın veya "
+                 "fotoğraf vermen gerek!`")",
+        'examples': ["{tr}kang", "{tr}kang 🤔", "{tr}kang 2", "{tr}kang 🤠 2"]},
     allow_channels=False, allow_via_bot=False)
 async def kang_(message: Message):
-    """ kang a sticker """
+    """ Stikır dızla """
     user = await userge.get_me()
     replied = message.reply_to_message
     photo = None
@@ -46,20 +46,20 @@ async def kang_(message: Message):
             is_anim = True
         elif replied.sticker:
             if not replied.sticker.file_name:
-                await message.edit("`Sticker has no Name!`")
+                await message.edit("`Çıkartmanın adı yok!`")
                 return
             emoji_ = replied.sticker.emoji
             is_anim = replied.sticker.is_animated
             if not replied.sticker.file_name.endswith('.tgs'):
                 resize = True
         else:
-            await message.edit("`Unsupported File!`")
+            await message.edit("`Desteklenmeyen dosya!`")
             return
         await message.edit(f"`{random.choice(KANGING_STR)}`")
         photo = await userge.download_media(message=replied,
                                             file_name=Config.DOWN_PATH)
     else:
-        await message.edit("`I can't kang that...`")
+        await message.edit("`Bunu Dızlayamam...`")
         return
     if photo:
         args = message.input_str.split()
@@ -176,24 +176,24 @@ async def kang_(message: Message):
                 await conv.get_response(mark_read=True)
                 await conv.send_message(packname)
                 await conv.get_response(mark_read=True)
-        await message.edit(f"**Sticker** [kanged](t.me/addstickers/{packname})!")
+        await message.edit(f"**Stikır dızlandı** [Burada](t.me/addstickers/{packname}) **Bulabilirsin!**")
         if os.path.exists(str(photo)):
             os.remove(photo)
 
 
 @userge.on_cmd("stkrinfo", about={
-    'header': "get sticker pack info",
-    'usage': "reply {tr}stkrinfo to any sticker"})
+    'header': "çıkartma paket bilgisini al",
+    'usage': "herhangi bir çıkartmaya {tr}stkrinfo yazın"})
 async def sticker_pack_info_(message: Message):
-    """ get sticker pack info """
+    """ çıkartma paket bilgisini al """
     replied = message.reply_to_message
     if not replied:
-        await message.edit("`I can't fetch info from nothing, can I ?!`")
+        await message.edit("`Hiçbir şeyden bilgi alamıyorum, değil mi?`")
         return
     if not replied.sticker:
-        await message.edit("`Reply to a sticker to get the pack details`")
+        await message.edit("`Paket bilgisini almak için bir çıkartmayı yanıtlayın`")
         return
-    await message.edit("`Fetching details of the sticker pack, please wait..`")
+    await message.edit("`Çıkartma paketinin bilgisi alınıyor, lütfen bekleyin ..`")
     get_stickerset = await message.client.send(
         GetStickerSet(
             stickerset=InputStickerSetShortName(
@@ -202,14 +202,14 @@ async def sticker_pack_info_(message: Message):
     for document_sticker in get_stickerset.packs:
         if document_sticker.emoticon not in pack_emojis:
             pack_emojis.append(document_sticker.emoticon)
-    out_str = f"**Sticker Title:** `{get_stickerset.set.title}\n`" \
-        f"**Sticker Short Name:** `{get_stickerset.set.short_name}`\n" \
-        f"**Archived:** `{get_stickerset.set.archived}`\n" \
-        f"**Official:** `{get_stickerset.set.official}`\n" \
-        f"**Masks:** `{get_stickerset.set.masks}`\n" \
-        f"**Animated:** `{get_stickerset.set.animated}`\n" \
-        f"**Stickers In Pack:** `{get_stickerset.set.count}`\n" \
-        f"**Emojis In Pack:**\n{' '.join(pack_emojis)}"
+    out_str = f"** paket adı:** `{get_stickerset.set.title}\n`" \
+        f"**Stikır Kısa Adı:** `{get_stickerset.set.short_name}`\n" \
+        f"**Arşivlendi mi?:** `{get_stickerset.set.archived}`\n" \
+        f"**Resmi:** `{get_stickerset.set.official}`\n" \
+        f"**Maskeler:** `{get_stickerset.set.masks}`\n" \
+        f"**Animasyonlu mu?:** `{get_stickerset.set.animated}`\n" \
+        f"**Paketteki Çıkartma sayısı:** `{get_stickerset.set.count}`\n" \
+        f"**Paketteki Emojiler:**\n{' '.join(pack_emojis)}"
     await message.edit(out_str)
 
 
@@ -228,13 +228,13 @@ def resize_photo(photo: str) -> io.BytesIO:
 
 
 KANGING_STR = (
-    "Using Witchery to kang this sticker...",
-    "Plagiarising hehe...",
-    "Inviting this sticker over to my pack...",
-    "Kanging this sticker...",
-    "Hey that's a nice sticker!\nMind if I kang?!..",
-    "hehe me stel ur stikér\nhehe.",
-    "Ay look over there (☉｡☉)!→\nWhile I kang this...",
-    "Roses are red violets are blue, kanging this sticker so my pacc looks cool",
-    "Imprisoning this sticker...",
-    "Mr.Steal Your Sticker is stealing this sticker... ")
+    "Çıkartmayı dızlıyorum...",
+    "Yaşasın dızcılık...",
+    "Bu çıkartmayı kendi paketime davet ediyorum...",
+    "Bunu dızlamam lazım...",
+    "Hey bu güzel bir çıkartma!\nHemen dızlıyorum..",
+    "Çıkartmanı dızlıyorum\nhahaha.",
+    "Hey şuraya bak. (☉｡☉)!→\nBen bunu dızlarken...",
+    "Güller kırmızı menekşeler mavi, bu çıkartmayı paketime dızlayarak havalı olacağım...",
+    "Çıkartma hapsediliyor...",
+    "Bay dızcı bu çıkartmayı dızlıyor... ")

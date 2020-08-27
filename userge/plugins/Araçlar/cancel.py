@@ -9,13 +9,13 @@
 from userge import userge, Message
 
 
-@userge.on_cmd("cancel", about={'header': "Reply this to message you want to cancel"})
+@userge.on_cmd("cancel", about={'header': "İptal Etmek İstediğiniz Mesaj için kullanılır"})
 async def cancel_(message: Message):
     replied = message.reply_to_message
     if replied:
         replied.cancel_the_process()
         await message.edit(
-            "`added your request to the cancel list`", del_in=5)
+            "`iptal listesine ekledi`", del_in=5)
     else:
         await message.edit(
-            "`reply to the message you want to cancel`", del_in=5)
+            "`iptal etmek istediğiniz mesaja yazın`", del_in=5)

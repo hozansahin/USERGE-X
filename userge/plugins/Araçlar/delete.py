@@ -9,8 +9,9 @@
 from userge import userge, Message
 
 
-@userge.on_cmd("del", about={'header': "delete replied message"})
+@userge.on_cmd("del", about={'header': "cevaplanan mesajı sil"})
 async def del_msg(message: Message):
+    """ cevaplanan mesajı silin """
     msg_ids = [message.message_id]
     if message.reply_to_message:
         msg_ids.append(message.reply_to_message.message_id)

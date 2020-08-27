@@ -23,13 +23,13 @@ _LEVELS = {
 
 
 @userge.on_cmd("logs", about={
-    'header': "check USERGE-X logs",
+    'header': "USERGE-X Loglarını kontrol edin",
     'flags': {
-        '-h': "get heroku logs",
-        '-l': "heroku logs lines limit : default 100"}}, allow_channels=False)
+        '-h': "heroku Loglarını getir",
+        '-l': "heroku Log satırı sınırı: varsayılan 100"}}, allow_channels=False)
 async def check_logs(message: Message):
-    """ check logs """
-    await message.edit("`checking logs ...`")
+    """ Logları kontrol et """
+    await message.edit("`Loglar kontrol ediliyor ...`")
     if '-h' in message.flags and Config.HEROKU_APP:
         limit = int(message.flags.get('-l', 100))
         logs = await pool.run_in_thread(Config.HEROKU_APP.get_log)(lines=limit)
@@ -48,27 +48,27 @@ async def check_logs(message: Message):
                     key = response['result']['key']
                     final_url = NEKOBIN_URL + key + file_ext
                     final_url_raw = NEKOBIN_URL_RAW + key + file_ext
-                    reply_text = "**Here are USERGE-X Logs** - \n"
+                    reply_text = "**İşte USERGE-X Logları** - \n"
                     reply_text += f"• [Neko]({final_url})\n"
                     reply_text += f"• [Neko_RAW]({final_url_raw})"
                     await message.edit(reply_text, disable_web_page_preview=True)
                 else:
-                    await message.err("Failed to reach Nekobin")
+                    await message.err("Nekobin'e ulaşılamadı..")
         
 
 
 @userge.on_cmd("setlvl", about={
-    'header': "set logger level, default to info",
+    'header': "Logların seviyesini ayarla, varsayılan olarak info",
     'types': ['debug', 'info', 'warning', 'error', 'critical'],
     'usage': "{tr}setlvl [level]",
     'examples': ["{tr}setlvl info", "{tr}setlvl debug"]})
 async def set_level(message: Message):
-    """ set logger level """
-    await message.edit("`setting logger level ...`")
+    """ Log seviyesini ayarlar"""
+    await message.edit("`Log seviyesi ayarlanıyor ...`")
     level = message.input_str.lower()
     if level not in _LEVELS:
-        await message.err("unknown level !")
+        await message.err("bilinmeyen seviye!")
         return
     for logger in (logging.getLogger(name) for name in logging.root.manager.loggerDict):
         logger.setLevel(_LEVELS[level])
-    await message.edit(f"`successfully set logger level as` : **{level.upper()}**", del_in=3)
+    await message.edit(f"**{level.upper()}** : `Log seviyesine başarıyla ayarlandı`", del_in=3)

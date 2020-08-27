@@ -1,4 +1,4 @@
-""" run shell or python command """
+""" Bash veya python komutunu çalıştır """
 
 # Copyright (C) 2020 by UsergeTeam@Github, < https://github.com/UsergeTeam >.
 #

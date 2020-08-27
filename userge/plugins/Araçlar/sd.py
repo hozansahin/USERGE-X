@@ -10,8 +10,8 @@ from userge import userge, Message
 
 
 @userge.on_cmd("sd (?:(\\d+)?\\s?(.+))", about={
-    'header': "make self-destructable messages",
-    'usage': "{tr}sd [test]\n{tr}sd [timeout in seconds] [text]"})
+    'header': "Kendi Kendini İmha Edebilen Mesajlar Yapın",
+    'usage': "{tr}sd [mesajın]\n{tr}sd [saniye türünden süre] [zaman ayarlı imha edilebilir mesaj]"})
 async def selfdestruct(message: Message):
     seconds = int(message.matches[0].group(1) or 0)
     text = str(message.matches[0].group(2))

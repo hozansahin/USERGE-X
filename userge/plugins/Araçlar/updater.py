@@ -18,21 +18,21 @@ CHANNEL = userge.getCLogger(__name__)
 
 
 @userge.on_cmd("update", about={
-    'header': "Check Updates or Update Userge",
+    'header': "Güncellemeleri Kontrol Et ve Botu Güncelle",
     'flags': {
-        '-pull': "pull updates",
-        '-push': "push updates to heroku",
-        '-master': "select master branch",
-        '-beta': "select beta branch",
-        '-alpha': "select alpha branch"},
-    'usage': "{tr}update : check updates from default branch\n"
-             "{tr}update -[branch_name] : check updates from any branch\n"
-             "add -pull if you want to pull updates\n"
-             "add -push if you want to push updates to heroku",
-    'examples': "{tr}update -beta -pull -push"}, del_pre=True, allow_channels=False)
+        '-pull': "güncellemeleri getir",
+        '-push': "güncellemeleri heroku'ya aktar",
+        '-master': "master sürümü için al",
+        '-beta': "beta sürümü için al",
+        '-alpha': "alpha sürümü için al"},
+    'usage': "{tr}update : varsayılan güncellemeleri kontrol edin\n"
+             "{tr}update -[parametre] : herhangi bir sürüm için güncellemeleri kontrol edin\n"
+             "güncellemeleri getirmek istiyorsan **-pull** Ekle\n"
+             "herokuya güncellemeleri göndermek istiyorsanız **-push** ekleyin",
+    'examples': "{tr}update -alpha -pull -push"}, del_pre=True, allow_channels=False)
 async def check_update(message: Message):
-    """ check or do updates """
-    await message.edit("`Checking for updates, please wait....`")
+    """ güncellemeleri kontrol et veya güncelle """
+    await message.edit("`Güncellemeler kontrol ediliyor, lütfen bekleyin ....`")
     repo = Repo()
     ups_rem = repo.remote(Config.UPSTREAM_REMOTE)
     try:
@@ -57,7 +57,7 @@ async def check_update(message: Message):
     if len(flags) == 1:
         branch = flags[0]
     if branch not in repo.branches:
-        await message.err(f'invalid branch name : {branch}')
+        await message.err(f'{branch} :geçersiz parametre')
         return
     out = ''
     try:
@@ -70,35 +70,35 @@ async def check_update(message: Message):
         return
     if out:
         if pull_from_repo:
-            await message.edit(f'`New update found for [{branch}], Now pulling...`')
+            await message.edit(f'`[{branch}] İçin yeni güncelleme bulundu, Şimdi güncelleniyor ...`')
             await asyncio.sleep(1)
             repo.git.reset('--hard', 'FETCH_HEAD')
-            await CHANNEL.log(f"**UPDATED Userge from [{branch}]:\n\n📄 CHANGELOG 📄**\n\n{out}")
+            await CHANNEL.log(f"**[{branch}] için  userge güncellemesi \n\n📄 YENİLİKLER 📄**\n\n{out}")
         elif not push_to_heroku:
-            changelog_str = f'**New UPDATE available for [{branch}]:\n\n📄 CHANGELOG 📄**\n\n'
+            changelog_str = f'**[{branch}]: İçin yeni GÜNCELLEME mevcut \n\n📄 YENİLİKLER 📄**\n\n'
             await message.edit_or_send_as_file(changelog_str + out, disable_web_page_preview=True)
             return
     elif not push_to_heroku:
-        await message.edit(f'**Userge is up-to-date with [{branch}]**', del_in=5)
+        await message.edit(f'**[{branch}] zaten güncel**', del_in=5)
         return
     if not push_to_heroku:
         await message.edit(
-            '**Userge Successfully Updated!**\n'
-            '`Now restarting... Wait for a while!`', del_in=3)
+            '**Userge Başarıyla Güncellendi!**\n'
+            '`Şimdi yeniden başlatılıyor ... Lütfen bir süre bekleyin!`', del_in=3)
         asyncio.get_event_loop().create_task(userge.restart(update_req=True))
         return
     if not Config.HEROKU_GIT_URL:
-        await message.err("please set heroku things...")
+        await message.err("lütfen heroku değişkenlerini ayarlayın ...")
         return
     await message.edit(
-        f'`Now pushing updates from [{branch}] to heroku...\n'
-        'this will take upto 3 min`\n\n'
-        f'* **Restart** me after about 3 min using `{Config.CMD_TRIGGER}restart -h`\n\n'
-        '* After restarted successfully, check updates again :)')
+        f'`[{branch}] sürümü için herokuya güncellemeler yapılıyor ...\n'
+        'bu 3 dakika kadar sürecektir`\n\n'
+        f'* Yaklaşık 3 dakika sonra beni yeniden başlat Kullanım: `{Config.CMD_TRIGGER}restart -h`\n\n'
+        '* Yeniden başlatıldıktan sonra güncellemeleri tekrar kontrol edin :)')
     if "heroku" in repo.remotes:
         remote = repo.remote("heroku")
         remote.set_url(Config.HEROKU_GIT_URL)
     else:
         remote = repo.create_remote("heroku", Config.HEROKU_GIT_URL)
     remote.push(refspec=f'{branch}:master', force=True)
-    await message.edit(f"**HEROKU APP : {Config.HEROKU_APP.name} is up-to-date with [{branch}]**")
+    await message.edit(f"**HEROKU ADI : {Config.HEROKU_APP.name},[{branch}] sürümü için zaten güncel **")
