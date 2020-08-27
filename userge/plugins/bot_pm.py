@@ -66,6 +66,7 @@ Tanıştığıma memnun oldum! Ben **@{bot.username}**
 @userge.on_cmd("bot_pm", about={
     'header': "Botunuzun /start komutuna yanıt vermesini sağlayan modül"})
 async def op_(message: Message):
+<<<<<<< HEAD
     text = "**Sadece BOT'un PM'sinde çalışır**\n\n"
     text += "<code>kullanmak için botunuza /start yazın</code>"
     await message.edit(text, del_in=5)
