@@ -16,7 +16,7 @@ from os.path import basename
 from typing import Tuple, List, Optional
 
 from html_telegraph_poster import TelegraphPoster
-from pyrogram import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 import userge
 
@@ -55,12 +55,12 @@ def get_file_id_and_ref(message: 'userge.Message') -> Tuple[Optional[str], Optio
 
 
 def humanbytes(size: float) -> str:
-    """ humanize size """
+    """ Dosya boyutlarını ayarla """
     if not size:
         return ""
     power = 1024
     t_n = 0
-    power_dict = {0: ' ', 1: 'Ki', 2: 'Mi', 3: 'Gi', 4: 'Ti'}
+    power_dict = {0: ' ', 1: 'K', 2: 'M', 3: 'G', 4: 'T'}
     while size > power:
         size /= power
         t_n += 1
@@ -68,13 +68,13 @@ def humanbytes(size: float) -> str:
 
 
 def time_formatter(seconds: float) -> str:
-    """ humanize time """
+    """ Zaman Dilimini ayarlama """
     minutes, seconds = divmod(int(seconds), 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
-    tmp = ((str(days) + "d, ") if days else "") + \
-        ((str(hours) + "h, ") if hours else "") + \
-        ((str(minutes) + "m, ") if minutes else "") + \
+    tmp = ((str(days) + "g, ") if days else "") + \
+        ((str(hours) + "s, ") if hours else "") + \
+        ((str(minutes) + "d, ") if minutes else "") + \
         ((str(seconds) + "s, ") if seconds else "")
     return tmp[:-2]
 
@@ -95,7 +95,7 @@ def post_to_telegraph(a_title: str, content: str) -> str:
 
 
 async def runcmd(cmd: str) -> Tuple[str, str, int, int]:
-    """ run command in terminal """
+    """ terminalde komut çalıştır """
     args = shlex.split(cmd)
     process = await asyncio.create_subprocess_exec(*args,
                                                    stdout=asyncio.subprocess.PIPE,

@@ -16,18 +16,18 @@ CHANNEL = userge.getCLogger(__name__)
 
 
 @userge.on_cmd("cr", about={
-    'header': "use this to convert currency & get exchange rate",
-    'description': "Convert currency & get exchange rates.",
-    'examples': "{tr}cr 1 BTC USD"})
+    'header': "döviz kuru  & para birimi dönüştürmek için bunu kullan",
+    'description': "Para birimini dönüştürün ve döviz kurlarını alın.",
+    'examples': "{tr}cr 1 USD TRY"})
 async def cur_conv(message: Message):
     """
-    this function can get exchange rate results
+    bu özellik döviz kuru sonuçlarını almanızı sağlar
     """
     if Config.CURRENCY_API is None:
         await message.edit(
-            "<code>Oops!!get the API from</code> "
-            "<a href='https://free.currencyconverterapi.com'>HERE</a> "
-            "<code>& add it to Heroku config vars</code> (<code>CURRENCY_API</code>)",
+            "<code>Hata !! API'yi /code> "
+            "<a href='https://free.currencyconverterapi.com'>Buradan</a> Alın "
+            "<code>& Heroku config vars'a ekle</code> (<code>CURRENCY_API</code>)",
             disable_web_page_preview=True,
             parse_mode="html", del_in=0)
         return
@@ -38,7 +38,7 @@ async def cur_conv(message: Message):
     if len(curcon) == 3:
         amount, currency_to, currency_from = curcon
     else:
-        await message.edit("`something went wrong!! do .help cr`")
+        await message.edit("`bir şeyler yanlış gitti!! .help cr kullanın`")
         return
 
     if amount.isdigit():
@@ -51,11 +51,11 @@ async def cur_conv(message: Message):
         result = float(amount) / float(result)
         result = round(result, 5)
         await message.edit(
-            "**CURRENCY EXCHANGE RATE RESULT:**\n\n"
+            "**DÖVİZ KURU SONUCU:**\n\n"
             f"`{amount}` **{currency_to}** = `{result}` **{currency_from}**")
-        await CHANNEL.log("`cr` command executed sucessfully")
+        await CHANNEL.log("`cr` komut başarıyla çalıştırıldı")
 
     else:
         await message.edit(
-            r"`This seems to be some alien currency, which I can't convert right now.. (⊙_⊙;)`",
+            r"`Bu, şu anda dönüştüremediğim yabancı bir para birimi gibi.. (⊙_⊙;)`",
             del_in=0)

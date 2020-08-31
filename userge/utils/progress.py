@@ -25,8 +25,8 @@ async def progress(current: int,
                    message: 'userge.Message',
                    ud_type: str,
                    file_name: str = '',
-                   delay: int = 5) -> None:
-    """ progress function """
+                   delay: int = userge.Config.EDIT_SLEEP_TIMEOUT) -> None:
+    """ ilerleme fonksiyonu """
     if message.process_is_canceled:
         await message.client.stop_transmission()
     task_id = f"{message.chat.id}.{message.message_id}"
@@ -53,10 +53,10 @@ async def progress(current: int,
             "__{}__ : `{}`\n" + \
             "```[{}{}]```\n" + \
             "**İlerleme** : `{}%`\n" + \
-            "**Tamamlandı** : `{}`\n" + \
+            "**Tamamlanan** : `{}`\n" + \
             "**Toplam** : `{}`\n" + \
             "**Hız** : `{}/s`\n" + \
-            "**ETA** : `{}`"
+            "**Tahmini Bitiş** : `{}`"
         progress_str = progress_str.format(
             ud_type,
             file_name,

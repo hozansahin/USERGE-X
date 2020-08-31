@@ -13,7 +13,7 @@ __all__ = ['ChannelLogger']
 import asyncio
 from typing import Optional, Union
 
-from pyrogram import Message as RawMessage
+from pyrogram.types import Message as RawMessage
 
 from userge import logging, Config
 from userge.utils import SafeDict, get_file_id_and_ref, parse_buttons
@@ -25,7 +25,7 @@ _LOG_STR = "<<<!  :::::  %s  :::::  !>>>"
 
 
 def _gen_string(name: str) -> str:
-    return "**logger** : #" + name.split('.')[-1].upper() + "\n\n{}"
+    return "**Log Kaydı** : #" + name.split('.')[-1].upper() + "\n\n{}"
 
 
 class ChannelLogger:
@@ -45,7 +45,7 @@ class ChannelLogger:
         Returns:
             str
         """
-        return "<b><a href='https://t.me/c/{}/{}'>Preview</a></b>".format(
+        return "<b><a href='https://t.me/c/{}/{}'>Görüntüle</a></b>".format(
             str(Config.LOG_CHANNEL_ID)[4:], message_id)
 
     def bind(self, client: Union['_client.Userge', '_client._UsergeBot']) -> None:

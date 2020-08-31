@@ -17,13 +17,13 @@ _T_LIMIT = 5242880
 
 
 @userge.on_cmd("telegraph", about={
-    'header': "Upload file to Telegra.ph's servers",
+    'header': "Telegra.ph sunucularına dosya yükleyin",
     'types': ['.jpg', '.jpeg', '.png', '.gif', '.mp4'],
-    'usage': "reply {tr}telegraph to supported media : limit 5MB"})
+    'usage': "{tr}telegraph desteklenen medyaya göre yanıtla: 5MB ile sınırlıdır"})
 async def telegraph_(message: Message):
     replied = message.reply_to_message
     if not replied:
-        await message.err("reply to supported media")
+        await message.err("desteklenen medyayı yanıtla")
         return
     if not ((replied.photo and replied.photo.file_size <= _T_LIMIT)
             or (replied.animation and replied.animation.file_size <= _T_LIMIT)
@@ -33,21 +33,21 @@ async def telegraph_(message: Message):
                 and replied.document.file_name.endswith(
                     ('.jpg', '.jpeg', '.png', '.gif', '.mp4'))
                 and replied.document.file_size <= _T_LIMIT)):
-        await message.err("not supported!")
+        await message.err("desteklenmiyor!")
         return
-    await message.edit("`processing...`")
+    await message.edit("`işleniyor...`")
     dl_loc = await message.client.download_media(
         message=message.reply_to_message,
         file_name=Config.DOWN_PATH,
         progress=progress,
-        progress_args=(message, "trying to download")
+        progress_args=(message, "indirmeye çalışıyor")
     )
-    await message.edit("`uploading to telegraph...`")
+    await message.edit("`telegraph'a yükleniyor...`")
     try:
         response = upload_file(dl_loc)
     except Exception as t_e:
         await message.err(t_e)
     else:
-        await message.edit(f"**[Here Your Telegra.ph Link!](https://telegra.ph{response[0]})**")
+        await message.edit(f"**[İşte Telegra.ph Bağlantınız!](https://telegra.ph{response[0]})**")
     finally:
         os.remove(dl_loc)

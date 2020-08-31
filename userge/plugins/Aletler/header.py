@@ -12,22 +12,22 @@ from userge import userge, Message
 
 
 @userge.on_cmd("head", about={
-    'header': "View headers in URL",
+    'header': "URL'deki içeriği görüntüleme",
     'flags': {
-        '-r': "allow redirects",
-        '-s': "allow streams",
-        '-t': "request timeout"},
-    'usage': "{tr}head [flags] [url]",
+        '-r': "yönlendirmelere izin ver",
+        '-s': "akışlara izin ver",
+        '-t': "istek zaman aşımına uğrasın"},
+    'usage': "{tr}head [parametre] [url]",
     'examples': "{tr}head -r -s -t5 https://www.google.com"})
 async def req_head(message: Message):
-    await message.edit("Processing ...")
+    await message.edit("İşleniyor ...")
     link = message.filtered_input_str
     flags = message.flags
     red = '-r' in flags
     stm = '-s' in flags
     tout = int(flags.get('-t', 3))
     if not link:
-        await message.err(text="Please give me a link link!")
+        await message.err(text="Lütfen bana bir bağlantı verin!")
         return
     try:
         cd = requests.head(url=link,
@@ -37,7 +37,7 @@ async def req_head(message: Message):
     except Exception as i_e:
         await message.err(i_e)
         return
-    output = f"**URL**: `{link}`\n\n**STATUS CODE**: __{cd.status_code}__\n\n**HEADERS**:\n\n"
+    output = f"**URL**: `{link}`\n\n**DURUM KODU**: __{cd.status_code}__\n\n**İÇERİKLER**:\n\n"
     for k, v in cd.headers.items():
         output += f"   🏷 __{k.lower()}__ : `{v}`\n\n"
     await message.edit_or_send_as_file(text=output, caption=link,

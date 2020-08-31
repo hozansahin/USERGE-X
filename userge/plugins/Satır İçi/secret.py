@@ -1,5 +1,7 @@
 from userge import userge, Config, get_collection, Message
-from pyrogram import Filters, CallbackQuery
+from pyrogram.types import CallbackQuery
+from pyrogram import filters
+
 SECRET_MSG = get_collection("SECRET_MSG") 
 
 
@@ -10,7 +12,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         ubot = userge
 
        
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"^secret_btn$"))
+    @ubot.on_callback_query(filters.regex(pattern=r"^secret_btn$"))
     async def alive_callback(_, callback_query: CallbackQuery): 
         sender = await userge.get_me()
         msg = f"🔓 **{sender.first_name}** : tarafından gelen mesaj "
@@ -28,9 +30,9 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             await callback_query.answer("Hey, Bekle! Bu mesaj aşırı gizlidir 👽", show_alert=True)
 
 @userge.on_cmd("secret", about={
-    'header': "Satır İçi Bot ile Gizli Mesaj Göndermenize yarar"})
+    'header': "yardım için .secret yazın"})
 async def secret_(message: Message):
     text = "**YANLIZCA SATIR İÇİ !**\n\n"
-    text += "@botunuzunadi secret @behsedilen <Gizli mesajın>"
-    await message.edit(text, del_in=10)
+    text += "@botunuzunadi secret [kullanıcıadı VEYA kullanıcıid]  \"Gizli mesajın\""
+    await message.edit(text, del_in=20)
     

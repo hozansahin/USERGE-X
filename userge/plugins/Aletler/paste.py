@@ -1,4 +1,4 @@
-""" paste text to bin """
+""" metin yapıştırma servisi """
 
 # Copyright (C) 2020 by UsergeTeam@Github, < https://github.com/UsergeTeam >.
 #
@@ -20,13 +20,13 @@ NEKOBIN_URL = "https://nekobin.com/"
 
 
 @userge.on_cmd("paste", about={
-    'header': "Pastes text or text_file to dogbin",
-    'flags': {'-n': "use nekobin"},
-    'usage': "{tr}paste [flags] [file_type] [text | reply to msg]",
+    'header': "Metin veya metin dosyasını yapıştırma servislerine gönderir",
+    'flags': {'-n': "nekobin kullan"},
+    'usage': "{tr}paste [parametre] [file_type] [text | reply to msg]",
     'examples': "{tr}paste -py import os"}, del_pre=True)
 async def paste_(message: Message) -> None:
-    """ pastes the text directly to dogbin or nekobin """
-    await message.edit("`Processing...`")
+    """metni doğrudan dogbin veya nekobin servislerine yapıştırır """
+    await message.edit("`İşleniyor...`")
     text = message.filtered_input_str
     replied = message.reply_to_message
     use_neko = False
@@ -40,7 +40,7 @@ async def paste_(message: Message) -> None:
     elif not text and replied and replied.text:
         text = replied.text
     if not text:
-        await message.err("input not found!")
+        await message.err("Veri bulunamadı!")
         return
     flags = list(message.flags)
     if 'n' in flags:
@@ -48,7 +48,7 @@ async def paste_(message: Message) -> None:
         flags.remove('n')
     if flags and len(flags) == 1:
         file_ext = '.' + flags[0]
-    await message.edit("`Pasting text ...`")
+    await message.edit("`Metni yapıştırıyorum ...`")
     async with aiohttp.ClientSession() as ses:
         if use_neko:
             async with ses.post(NEKOBIN_URL + "api/documents", json={"content": text}) as resp:
@@ -59,7 +59,7 @@ async def paste_(message: Message) -> None:
                     reply_text = f"**Nekobin** [URL]({final_url})"
                     await message.edit(reply_text, disable_web_page_preview=True)
                 else:
-                    await message.err("Failed to reach Nekobin")
+                    await message.err("Nekobin'e ulaşılamadı")
         else:
             async with ses.post(DOGBIN_URL + "documents", data=text.encode('utf-8')) as resp:
                 if resp.status == 200:
@@ -67,25 +67,25 @@ async def paste_(message: Message) -> None:
                     key = response['key']
                     final_url = DOGBIN_URL + key
                     if response['isUrl']:
-                        reply_text = (f"**Shortened** [URL]({final_url})\n"
+                        reply_text = (f"**Kısa** [URL]({final_url})\n"
                                       f"**Dogbin** [URL]({DOGBIN_URL}v/{key})")
                     else:
                         reply_text = f"**Dogbin** [URL]({final_url}{file_ext})"
                     await message.edit(reply_text, disable_web_page_preview=True)
                 else:
-                    await message.err("Failed to reach Dogbin")
+                    await message.err("Dogbin'e ulaşılamadı")
 
 
 @userge.on_cmd("getpaste", about={
-    'header': "Gets the content of a del.dog paste",
+    'header': "Bir yapıştırma servisinin içeriğini alır",
     'usage': "{tr}getpaste [del.dog or nekobin link]"})
 async def get_paste_(message: Message):
-    """ fetches the content of a dogbin or nekobin URL """
+    """ dogbin veya nekobin URL'sinin içeriğini getirir """
     link = message.input_str
     if not link:
-        await message.err("input not found!")
+        await message.err("veri girişi bulunamadı!")
         return
-    await message.edit("`Getting paste content...`")
+    await message.edit("`Yapıştırılmış içerik alınıyor ...`")
     format_view = f'{DOGBIN_URL}v/'
     if link.startswith(format_view):
         link = link[len(format_view):]
@@ -103,19 +103,19 @@ async def get_paste_(message: Message):
         link = link[len("nekobin.com/"):]
         raw_link = f'{NEKOBIN_URL}raw/{link}'
     else:
-        await message.err("Is that even a paste url?")
+        await message.err("Bu bir yapıştırma servisi URL'si mi?")
         return
     async with aiohttp.ClientSession(raise_for_status=True) as ses:
         try:
             async with ses.get(raw_link) as resp:
                 text = await resp.text()
         except ServerTimeoutError as e_r:
-            await message.err(f"Request timed out -> {e_r}")
+            await message.err(f"İstek zaman aşımına uğradı -> {e_r}")
         except TooManyRedirects as e_r:
-            await message.err("Request exceeded the configured "
-                              f"number of maximum redirections -> {e_r}")
+            await message.err("Hatalı İstek "
+                              f"maksimum yönlendirme sayısı -> {e_r}")
         except ClientResponseError as e_r:
-            await message.err(f"Request returned an unsuccessful status code -> {e_r}")
+            await message.err(f"İstek, başarısız bir hata kodu döndürdü -> {e_r}")
         else:
-            await message.edit_or_send_as_file("--Fetched Content Successfully!--"
-                                               f"\n\n**Content** :\n`{text}`")
+            await message.edit_or_send_as_file("--İçerik Başarıyla Getirildi !--"
+                                               f"\n\n**İşte! içerik** :\n`{text}`")

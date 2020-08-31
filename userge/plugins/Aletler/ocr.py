@@ -17,7 +17,7 @@ CHANNEL = userge.getCLogger(__name__)
 
 @pool.run_in_thread
 def ocr_space_file(filename,
-                   language='eng',
+                   language='tur',
                    overlay=False,
                    api_key=Config.OCR_SPACE_API_KEY):
     """
@@ -48,20 +48,20 @@ def ocr_space_file(filename,
 
 
 @userge.on_cmd("ocr", about={
-    'header': "use this to run ocr reader",
-    'description': "get ocr result for images (file size limit = 1MB)",
+    'header': "ocr okuyucuyu çalıştırmak için bunu kullanın",
+    'description': "resimler için ocr(Okuma) sonucunu al (dosya boyutu sınırı = 1MB)",
     'examples': [
-        "{tr}ocr [reply to image]",
-        "{tr}ocr eng [reply to image] (get lang codes from 'https://ocr.space/ocrapi')"]})
+        "{tr}ocr [resmi yanıtla]",
+        "{tr}ocr eng [resmi yanıtla] (Dil kodlarını 'https://ocr.space/ocrapi' burada bulabilirsin)"]})
 async def ocr_gen(message: Message):
     """
-    this function can generate ocr output for a image file
+    bu işlev görüntü dosyası için ocr(metin) çıktısı oluşturabilir
     """
     if Config.OCR_SPACE_API_KEY is None:
         await message.edit(
-            "<code>Oops!!get the OCR API from</code> "
-            "<a href='http://eepurl.com/bOLOcf'>HERE</a> "
-            "<code>& add it to Heroku config vars</code> (<code>OCR_SPACE_API_KEY</code>)",
+            "<code>Oops !! OCR API'sini şuradan alın</code> "
+            "<a href='http://eepurl.com/bOLOcf'>TIKLA</a> "
+            "<code>& Heroku config vars'a </code> (<code>OCR_SPACE_API_KEY</code>) Ekle",
             disable_web_page_preview=True,
             parse_mode="html", del_in=0)
         return
@@ -73,26 +73,26 @@ async def ocr_gen(message: Message):
         else:
             lang_code = "eng"
 
-        await message.edit(r"`Trying to Read.. 📖")
+        await message.edit(r"`Okumaya çalışıyorum.. 📖")
         downloaded_file_name = await message.client.download_media(message.reply_to_message)
         test_file = await ocr_space_file(downloaded_file_name, lang_code)
         try:
             ParsedText = test_file["ParsedResults"][0]["ParsedText"]
         except Exception as e_f:
             await message.edit(
-                r"`Couldn't read it.. (╯‵□′)╯︵┻━┻`"
-                "\n`I guess I need new glasses.. 👓`"
-                f"\n\n**ERROR**: `{e_f}`", del_in=0)
+                r"`Okuyamadım.. (╯‵□′)╯︵┻━┻`"
+                "\n`Sanırım yeni gözlüklere ihtiyacım var. 👓`"
+                f"\n\n**HATA**: `{e_f}`", del_in=0)
             os.remove(downloaded_file_name)
             return
         else:
             await message.edit(
-                "**Here's what I could read from it:**"
+                "**İşte ondan okuyabileceklerim:**"
                 f"\n\n`{ParsedText}`")
             os.remove(downloaded_file_name)
-            await CHANNEL.log("`ocr` command succefully executed")
+            await CHANNEL.log("`ocr` komut başarıyla çalıştırıldı")
             return
 
     else:
-        await message.edit(r"`i can't read nothing (°ー°〃) , do .help ocr`", del_in=0)
+        await message.edit(r"`hiçbir şey okuyamıyorum (°ー°〃) , .help ocr yazın`", del_in=0)
         return

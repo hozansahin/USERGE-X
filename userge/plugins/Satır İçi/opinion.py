@@ -5,9 +5,10 @@ import json
 from userge import userge, Message, Config
 from pyrogram.errors.exceptions import FloodWait
 from pyrogram.errors.exceptions.bad_request_400 import BadRequest
-from pyrogram import (
+from pyrogram.types import (
     InlineKeyboardMarkup, InlineKeyboardButton,
-    Filters, CallbackQuery)
+    CallbackQuery)
+from pyrogram import filters
 import os
 import asyncio
 
@@ -21,7 +22,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
     else:
         ubot = userge
     
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"opinion"))
+    @ubot.on_callback_query(filters.regex(pattern=r"opinion"))
     async def choice_cb(_, callback_query: CallbackQuery):
         ids = callback_query.from_user.id
         if not os.path.exists(PATH):
@@ -34,8 +35,10 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         if len(view_data) == 2:
             if str(ids) in view_data[0]:
                 if view_data[0][str(ids)] == "y" and counter[1] == "y":
+                    await callback_query.answer("Already Voted for 👍", show_alert=True)
                     return
                 if view_data[0][str(ids)] == "n" and counter[1] == "n":
+                    await callback_query.answer("Already Voted for 👎", show_alert=True)
                     return
                 if view_data[0][str(ids)] == "y" and counter[1] == "n":
                     agree = int(view_data[1]['agree']) - 1
@@ -47,6 +50,8 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                     disagree = view_data[1]['disagree'] - 1
                     view_data[1] = {"agree": agree, "disagree": disagree}
                     view_data[0][str(ids)] = "y"
+                else:
+                    await callback_query.answer("🔄 Refreshing", show_alert=True)
                 json.dump(view_data, open(PATH,'w'))
             else:
                 new_id = {ids : counter[1]}
@@ -57,6 +62,8 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 if counter[1] == "n":
                     agree = view_data[1]['agree'] 
                     disagree = view_data[1]['disagree'] + 1
+                else:
+                    await callback_query.answer("🔄 Refreshing", show_alert=True)
                 view_data[1] = {"agree": agree, "disagree": disagree}
                 json.dump(view_data, open(PATH,'w'))
         else:
@@ -82,7 +89,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         except BadRequest:
             return
 
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"^e_result$"))
+    @ubot.on_callback_query(filters.regex(pattern=r"^e_result$"))
     async def choice_result_cb(_, callback_query: CallbackQuery):
         u_id = callback_query.from_user.id 
         if u_id == Config.OWNER_ID:
@@ -109,8 +116,8 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             await callback_query.answer(owner, show_alert=True)
 
 @userge.on_cmd("opinion", about={
-    'header': "Ask For Opinion via Inline Bot"})
+    'header': "Ask For Opinion via Inline Bot, do .opinion to see help"})
 async def op_(message: Message):
-    text = "**IN INLINE**\n\n"
-    text += "<code>Do @yourbot op statement</code>"
-    await message.edit(text, del_in=10)
+    text = "**IN INLINE BOT**\n\n"
+    text += "op Are Cats Cute?"
+    await message.edit(text, del_in=20)

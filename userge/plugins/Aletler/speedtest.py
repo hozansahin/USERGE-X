@@ -15,15 +15,15 @@ from userge.utils import humanbytes
 CHANNEL = userge.getCLogger(__name__)
 
 
-@userge.on_cmd("speedtest", about={'header': "test your server speed"})
+@userge.on_cmd("speedtest", about={'header': "Sunucu Hızınızı Test Edin"})
 async def speedtst(message: Message):
-    await message.edit("`Running speed test . . .`")
+    await message.edit("`hızı testi yapılıyor. . .`")
     try:
         test = speedtest.Speedtest()
         test.get_best_server()
-        await message.try_to_edit("`Performing download test . . .`")
+        await message.try_to_edit("`İndirme hızı ölçülüyor . . .`")
         test.download()
-        await message.try_to_edit("`Performing upload test . . .`")
+        await message.try_to_edit("`Yükleme hızı ölçülüyor . . .`")
         test.upload()
         test.results.share()
         result = test.results.dict()
@@ -31,25 +31,25 @@ async def speedtst(message: Message):
         await message.err(text=e)
         return
     path = wget.download(result['share'])
-    output = f"""**--Started at {result['timestamp']}--
+    output = f"""**--{result['timestamp']} Anlık Test --
 
-Client:
+İstemci:
 
-ISP: `{result['client']['isp']}`
-Country: `{result['client']['country']}`
+Sağlayıcı: `{result['client']['isp']}`
+Ülke Kısaltması: `{result['client']['country']}`
 
-Server:
+Sunucu:
 
-Name: `{result['server']['name']}`
-Country: `{result['server']['country']}, {result['server']['cc']}`
+Konum: `{result['server']['name']}`
+Ülke: `{result['server']['country']}, {result['server']['cc']}`
 Sponsor: `{result['server']['sponsor']}`
-Latency: `{result['server']['latency']}`
+Tepki: `{result['server']['latency']}`
 
 Ping: `{result['ping']}`
-Sent: `{humanbytes(result['bytes_sent'])}`
-Received: `{humanbytes(result['bytes_received'])}`
-Download: `{humanbytes(result['download'] / 8)}/s`
-Upload: `{humanbytes(result['upload'] / 8)}/s`**"""
+Gönderilen: `{humanbytes(result['bytes_sent'])}`
+Alınan: `{humanbytes(result['bytes_received'])}`
+İndirme: `{humanbytes(result['download'] / 8)}/s`
+Yükleme: `{humanbytes(result['upload'] / 8)}/s`**"""
     msg = await message.client.send_photo(chat_id=message.chat.id,
                                           photo=path,
                                           caption=output)

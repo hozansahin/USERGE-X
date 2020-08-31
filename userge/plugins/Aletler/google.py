@@ -12,14 +12,14 @@ from userge import userge, Message
 
 
 @userge.on_cmd("google", about={
-    'header': "do a Google search",
+    'header': "bir Google araması yapın",
     'flags': {
-        '-p': "page of results to return (default to 1)",
-        '-l': "limit the number of returned results (defaults to 5)(max 10)"},
-    'usage': "{tr}google [flags] [query | reply to msg]",
-    'examples': "{tr}google -p4 -l10 github-userge"})
+        '-p': "döndürülecek sonuç sayfası (varsayılan olarak 1'dir)",
+        '-l': "döndürülen sonuç sayısını sınırlayın (varsayılan değer 5'tir) (en fazla 10)"},
+    'usage': "{tr}google [parametre] [sorgu | mesajı cevapla]",
+    'examples': "{tr}google -p4 -l10 yapay zeka"})
 async def gsearch(message: Message):
-    await message.edit("Processing ...")
+    await message.edit("Arıyorum ...")
     query = message.filtered_input_str
     flags = message.flags
     page = int(flags.get('-p', 1))
@@ -27,7 +27,7 @@ async def gsearch(message: Message):
     if message.reply_to_message:
         query = message.reply_to_message.text
     if not query:
-        await message.err(text="Give a query or reply to a message to google!")
+        await message.err(text="Google'a bir sorgu gönderin veya bir mesajı yanıtlayın!")
         return
     try:
         g_search = GoogleSearch()
@@ -45,6 +45,6 @@ async def gsearch(message: Message):
             output += f"`{desc}`\n\n"
         except IndexError:
             break
-    output = f"**Google Search:**\n`{query}`\n\n**Results:**\n{output}"
+    output = f"**Google'da aradım:**\n`{query}`\n\n**Bulduklarım:**\n{output}"
     await message.edit_or_send_as_file(text=output, caption=query,
                                        disable_web_page_preview=True)

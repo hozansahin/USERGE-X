@@ -1,4 +1,4 @@
-""" set permissions to users """
+""" kullanıcın yetkilerini ayarla """
 
 # Copyright (C) 2020 by UsergeTeam@Github, < https://github.com/UsergeTeam >.
 #
@@ -9,7 +9,9 @@
 # All rights reserved.
 
 import os
-from pyrogram import ChatPermissions
+
+from pyrogram.types import ChatPermissions
+
 from userge import userge, Message
 
 CHANNEL = userge.getCLogger(__name__)
@@ -17,20 +19,20 @@ CHANNEL = userge.getCLogger(__name__)
 
 @userge.on_cmd(
     "lock", about={
-        'header': "use this to lock group permissions",
-        'description': "Allows you to lock some common permission types in the chat.\n"
-                       "[NOTE: Requires proper admin rights in the chat!!!]",
+        'header': "Grup yetkilerini Değiştirmek İçin Bunu Kullanın",
+        'description': "Sohbette kullanılan bazı yetkileri Devredışı bırakmanızı sağlar.\n"
+                       "NOT: Sohbette gerekli yönetici yetkilerinizin olması gerekir !!!",
         'types': [
             'all', 'msg', 'media', 'polls', 'invite', 'pin', 'info',
             'webprev', 'inlinebots', 'animations', 'games', 'stickers'],
-        'examples': "{tr}lock [all | type]"},
+        'examples': "{tr}lock [all | türü]"},
     allow_channels=False, check_restrict_perm=True)
 async def lock_perm(message: Message):
-    """ lock chat permissions from tg group """
+    """ grubunuzdai sohbet yetkilerini Devredışı bırakmanızı sağlar """
     lock_type = message.input_str
     chat_id = message.chat.id
     if not lock_type:
-        await message.edit(text=r"`I Can't Lock Nothing! (－‸ლ)`", del_in=5)
+        await message.edit(text=r"`Hiçbirşeyi Devredışı bırakamam! (－‸ლ)`", del_in=5)
         return
     msg = message.chat.permissions.can_send_messages
     media = message.chat.permissions.can_send_media_messages
@@ -46,14 +48,14 @@ async def lock_perm(message: Message):
     if lock_type == "all":
         try:
             await message.client.set_chat_permissions(chat_id, ChatPermissions())
-            await message.edit("**🔒 Locked all permission from this Chat!**", del_in=5)
+            await message.edit("**🔒 Bu Sohbetten gelen tüm yetkiler Devredışı bırakıldı!**", del_in=5)
             await CHANNEL.log(
-                f"#LOCK\n\nCHAT: `{message.chat.title}` (`{chat_id}`)\n"
-                f"PERMISSIONS: `All Permissions`")
+                f"#DEVREDIŞI\n\n GRUP: `{message.chat.title}` (`{chat_id}`)\n"
+                f"YETKİ TÜRÜ: `Tüm Yetkiler`")
         except Exception as e_f:
             await message.edit(
                 r"`i don't have permission to do that ＞︿＜`\n\n"
-                f"**ERROR:** `{e_f}`", del_in=5)
+                f"**HATA:** `{e_f}`", del_in=5)
         return
     if lock_type == "msg":
         msg = False
@@ -89,7 +91,7 @@ async def lock_perm(message: Message):
         pin = False
         perm = "pin"
     else:
-        await message.edit(text=r"`Invalid Lock Type! ¯\_(ツ)_/¯`", del_in=5)
+        await message.edit(text=r"`Geçersiz Yetki Türü! ¯\_(ツ)_/¯`", del_in=5)
         return
     try:
         await message.client.set_chat_permissions(
@@ -105,31 +107,31 @@ async def lock_perm(message: Message):
                             can_change_info=info,
                             can_invite_users=invite,
                             can_pin_messages=pin))
-        await message.edit(f"**🔒 Locked {perm} for this chat!**", del_in=5)
+        await message.edit(f"**🔒  {perm} Bu sohbet için Devredışı!**", del_in=5)
         await CHANNEL.log(
-            f"#LOCK\n\nCHAT: `{message.chat.title}` (`{chat_id}`)\n"
-            f"PERMISSIONS: `{perm} Permission`")
+            f"#DEVREDIŞI\n\nGRUP: `{message.chat.title}` (`{chat_id}`)\n"
+            f"YETKİ TÜRÜ: `{perm}`")
     except Exception as e_f:
         await message.edit(
-            r"`i don't have permission to do that ＞︿＜`\n\n"
-            f"**ERROR:** `{e_f}`", del_in=5)
+            r"`bunu yapma yetkim yok ＞︿＜`\n\n"
+            f"**HATA:** `{e_f}`", del_in=5)
 
 
 @userge.on_cmd("unlock", about={
-    'header': "use this to unlock group permissions",
-    'description': "Allows you to unlock some common permission types in the chat.\n"
-                   "[NOTE: Requires proper admin rights in the chat!!!]",
+    'header': "Devredışı grup izinlerini etkinleştirmek için kullan",
+    'description': "Sohbette kullanılan bazı yetkileri Etkinleştirmenizi sağlar.\n"
+                   "[NOT: Sohbette gerekli yönetici yetkilerinizin olması gerekir !!!]",
     'types': [
         'all', 'msg', 'media', 'polls', 'invite', 'pin', 'info',
         'webprev', 'inlinebots', 'animations', 'games', 'stickers'],
-    'examples': "{tr}unlock [all | type]"},
+    'examples': "{tr}unlock [all | türü]"},
     allow_channels=False, check_restrict_perm=True)
 async def unlock_perm(message: Message):
-    """ unlock chat permissions from tg group """
+    """ Devredışı grup izinlerini etkinleştirmek için kullan """
     unlock_type = message.input_str
     chat_id = message.chat.id
     if not unlock_type:
-        await message.edit(text=r"`I Can't Unlock Nothing! (－‸ლ)`", del_in=5)
+        await message.edit(text=r"`Hiçbirini Etkinleştiremedim! (－‸ლ)`", del_in=5)
         return
     umsg = message.chat.permissions.can_send_messages
     umedia = message.chat.permissions.can_send_media_messages
@@ -158,14 +160,14 @@ async def unlock_perm(message: Message):
                                 can_pin_messages=True,
                                 can_add_web_page_previews=True))
             await message.edit(
-                "**🔓 Unlocked all permission from this Chat!**", del_in=5)
+                "**🔓 Bu Sohbetin tüm yetkileri Etkinleştirildi!**", del_in=5)
             await CHANNEL.log(
-                f"#UNLOCK\n\nCHAT: `{message.chat.title}` (`{chat_id}`)\n"
-                f"PERMISSIONS: `All Permissions`")
+                f"#ETKİNLEŞTİR\n\nGRUP: `{message.chat.title}` (`{chat_id}`)\n"
+                f"YETKİ TÜRÜ: `Tüm Yekiler`")
         except Exception as e_f:
             await message.edit(
-                r"`i don't have permission to do that ＞︿＜`\n\n"
-                f"**ERROR:** `{e_f}`", del_in=5)
+                r"`bunu yapma yetkim yok＞︿＜`\n\n"
+                f"**HATA:** `{e_f}`", del_in=5)
         return
     if unlock_type == "msg":
         umsg = True
@@ -201,7 +203,7 @@ async def unlock_perm(message: Message):
         upin = True
         uperm = "pin"
     else:
-        await message.edit(text=r"`Invalid Unlock Type! ¯\_(ツ)_/¯`", del_in=5)
+        await message.edit(text=r"`Geçersiz Etkinleşirme Türü! ¯\_(ツ)_/¯`", del_in=5)
         return
     try:
         await message.client.set_chat_permissions(
@@ -217,23 +219,23 @@ async def unlock_perm(message: Message):
                             can_change_info=uinfo,
                             can_invite_users=uinvite,
                             can_pin_messages=upin))
-        await message.edit(f"**🔓 Unlocked {uperm} for this chat!**", del_in=5)
+        await message.edit(f"**🔓 {uperm} Bu sohbet için Etkinleştirildi!**", del_in=5)
         await CHANNEL.log(
-            f"#UNLOCK\n\nCHAT: `{message.chat.title}` (`{chat_id}`)\n"
-            f"PERMISSIONS: `{uperm} Permission`")
+            f"#ETKİNLEŞTİR\n\nGRUP: `{message.chat.title}` (`{chat_id}`)\n"
+            f"YETKİ TÜRÜ: `{uperm} Yetkisi`")
     except Exception as e_f:
         await message.edit(
-            r"`i don't have permission to do that ＞︿＜`\n\n"
-            f"**ERROR:** `{e_f}`", del_in=5)
+            r"`bunu yapma yetkim yok ＞︿＜`\n\n"
+            f"**HATA:** `{e_f}`", del_in=5)
 
 
 @userge.on_cmd("vperm", about={
-    'header': "use this to view group permissions",
-    'description': "Allows you to view permission types on/off status in the chat."},
+    'header': "grup yetkilerini görüntülemek için bunu kullanın",
+    'description': "Sohbetteki yetkilerin Etkin / Devredışı durumunu görüntülemenizi sağlar."},
     allow_channels=False, allow_bots=False, allow_private=False)
 async def view_perm(message: Message):
-    """ check chat permissions from tg group """
-    await message.edit("`Checking group permissions... Hang on!! ⏳`")
+    """ grubun yetilerini görüntüleyin """
+    await message.edit("`Grup izinleri kontrol ediliyor ... Bekleyin !! ⏳`")
 
     def convert_to_emoji(val: bool):
         if val is True:
@@ -251,19 +253,19 @@ async def view_perm(message: Message):
     vinvite = convert_to_emoji(message.chat.permissions.can_invite_users)
     vpin = convert_to_emoji(message.chat.permissions.can_pin_messages)
     permission_view_str = ""
-    permission_view_str += "<b>CHAT PERMISSION INFO:</b>\n\n"
-    permission_view_str += f"<b>📩 Send Messages:</b> {vmsg}\n"
-    permission_view_str += f"<b>🎭 Send Media:</b> {vmedia}\n"
-    permission_view_str += f"<b>🎴 Send Stickers:</b> {vstickers}\n"
-    permission_view_str += f"<b>🎲 Send Animations:</b> {vanimations}\n"
-    permission_view_str += f"<b>🎮 Can Play Games:</b> {vgames}\n"
-    permission_view_str += f"<b>🤖 Can Use Inline Bots:</b> {vinlinebots}\n"
-    permission_view_str += f"<b>🌐 Webpage Preview:</b> {vwebprev}\n"
-    permission_view_str += f"<b>🗳 Send Polls:</b> {vpolls}\n"
-    permission_view_str += f"<b>ℹ Change Info:</b> {vinfo}\n"
-    permission_view_str += f"<b>👥 Invite Users:</b> {vinvite}\n"
-    permission_view_str += f"<b>📌 Pin Messages:</b> {vpin}\n"
-    if message.chat.photo:
+    permission_view_str += "<b>GRUP YETKİ BİLGİSİ:</b>\n\n"
+    permission_view_str += f"<b>📩 Mesaj gönderme:</b> {vmsg}\n"
+    permission_view_str += f"<b>🎭 Medya Gönder:</b> {vmedia}\n"
+    permission_view_str += f"<b>🎴 Çıkartma Gönderme:</b> {vstickers}\n"
+    permission_view_str += f"<b>🎲 Animasyon Gönderme:</b> {vanimations}\n"
+    permission_view_str += f"<b>🎮 Oyun Oynama:</b> {vgames}\n"
+    permission_view_str += f"<b>🤖 Satır İçi Botları Kullanma:</b> {vinlinebots}\n"
+    permission_view_str += f"<b>🌐 WebSitesi Önizlemesi:</b> {vwebprev}\n"
+    permission_view_str += f"<b>🗳 Anket Gönderme:</b> {vpolls}\n"
+    permission_view_str += f"<b>ℹ Bilgileri Değiştirme:</b> {vinfo}\n"
+    permission_view_str += f"<b>👥 Kullanıcıları Davet Etme:</b> {vinvite}\n"
+    permission_view_str += f"<b>📌 Mesajları Sabitleme:</b> {vpin}\n"
+    if message.chat.photo and vmedia == "✅":
         local_chat_photo = await message.client.download_media(
             message=message.chat.photo.big_file_id)
         await message.client.send_photo(chat_id=message.chat.id,
@@ -272,7 +274,7 @@ async def view_perm(message: Message):
                                         parse_mode="html")
         os.remove(local_chat_photo)
         await message.delete()
-        await CHANNEL.log("`vperm` command executed")
+        await CHANNEL.log("`vperm` komutu çalıştırıldı")
     else:
         await message.edit(permission_view_str)
-        await CHANNEL.log("`vperm` command executed")
+        await CHANNEL.log("`vperm` komutu çalıştırıldı")

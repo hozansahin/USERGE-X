@@ -22,17 +22,16 @@ CHANNEL = userge.getCLogger(__name__)
     'flags': {
         '-pull': "güncellemeleri getir",
         '-push': "güncellemeleri heroku'ya aktar",
-        '-master': "master sürümü için al",
-        '-beta': "beta sürümü için al",
-        '-alpha': "alpha sürümü için al"},
+        '-alpha': "alpha sürümü için al,
+        '-develop': "Geliştirme sürümü için al"},
     'usage': "{tr}update : varsayılan güncellemeleri kontrol edin\n"
-             "{tr}update -[parametre] : herhangi bir sürüm için güncellemeleri kontrol edin\n"
-             "güncellemeleri getirmek istiyorsan **-pull** Ekle\n"
-             "herokuya güncellemeleri göndermek istiyorsanız **-push** ekleyin",
+             "{tr}update -[sürüm] : herhangi bir sürüm için güncellemeleri kontrol edin\n"
+             "güncellemeleri getirmek istiyorsan -pull Ekle\n"
+             "herokuya güncellemeleri göndermek istiyorsanız -push ekleyin",
     'examples': "{tr}update -alpha -pull -push"}, del_pre=True, allow_channels=False)
 async def check_update(message: Message):
     """ güncellemeleri kontrol et veya güncelle """
-    await message.edit("`Güncellemeler kontrol ediliyor, lütfen bekleyin ....`")
+    await message.edit("`Güncellemeler kontrol ediliyor, lütfen bekleyin...`")
     repo = Repo()
     ups_rem = repo.remote(Config.UPSTREAM_REMOTE)
     try:
@@ -92,13 +91,13 @@ async def check_update(message: Message):
         return
     await message.edit(
         f'`[{branch}] sürümü için herokuya güncellemeler yapılıyor ...\n'
-        'bu 3 dakika kadar sürecektir`\n\n'
-        f'* Yaklaşık 3 dakika sonra beni yeniden başlat Kullanım: `{Config.CMD_TRIGGER}restart -h`\n\n'
-        '* Yeniden başlatıldıktan sonra güncellemeleri tekrar kontrol edin :)')
+        'bu 5 dakika kadar sürecektir`\n\n'
+        f'* 5 dakika sonra beni **yeniden başlat**\n Kullanım:  `{Config.CMD_TRIGGER}restart -h`\n\n'
+        '*Yeniden başlatıldıktan sonra güncellemeleri tekrar kontrol edin :)')
     if "heroku" in repo.remotes:
         remote = repo.remote("heroku")
         remote.set_url(Config.HEROKU_GIT_URL)
     else:
         remote = repo.create_remote("heroku", Config.HEROKU_GIT_URL)
     remote.push(refspec=f'{branch}:master', force=True)
-    await message.edit(f"**HEROKU ADI : {Config.HEROKU_APP.name},[{branch}] sürümü için zaten güncel **")
+    await message.edit(f"**HEROKU ADI : {Config.HEROKU_APP.name}, [{branch}] sürümü için zaten güncel!**")

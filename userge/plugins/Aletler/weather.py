@@ -18,8 +18,8 @@ CHANNEL = userge.getCLogger(__name__)
 
 
 async def get_tz(con):
-    """Get time zone of the given country
-    Credits: @aragon12 and @zakaryan2004
+    """Verilen ülkenin saat dilimini alın
+    yapımcı: @aragon12 ve @zakaryan2004
     """
     for c_code in c_n:
         if con == c_n[c_code]:
@@ -32,21 +32,21 @@ async def get_tz(con):
 
 
 @userge.on_cmd("weather", about={
-    'header': "use this to get weather details",
-    'description': "get weather info for any city",
+    'header': " hava durumu hakkında ayrıntılı bilgi almak için bunu kullanın",
+    'description': "herhangi bir şehir için hava durumu bilgisi alın",
     'examples': [
-        "{tr}weather (default city)",
-        "{tr}weather colombo (city name)"]})
+        "{tr}weather (varsayılan şehir)",
+        "{tr}weather ankara (şehir ismi)"]})
 async def weather_get(message: Message):
     """
-    this function can get weather info
+    bu fonksiyon hava durumu bilgisini alabilir
     """
     OWM_API = Config.OPEN_WEATHER_MAP
     if not OWM_API:
         await message.edit(
-            "<code>Oops!!get the API from</code> "
-            "<a href='https://openweathermap.org'>HERE</a> "
-            "<code>& add it to Heroku config vars</code> (<code>OPEN_WEATHER_MAP</code>)",
+            "<code>Hata !! API'yi şuradan alın:</code> "
+            "<a href='https://openweathermap.org'>TIKLA</a> "
+            "<code>& heroku config vars'a ekleyin</code> (<code>OPEN_WEATHER_MAP</code>)",
             disable_web_page_preview=True,
             parse_mode="html", del_in=0)
         return
@@ -56,7 +56,7 @@ async def weather_get(message: Message):
     if not message.input_str:
         CITY = Config.WEATHER_DEFCITY
         if not CITY:
-            await message.edit("`Please specify a city or set one as default!`", del_in=0)
+            await message.edit("`Lütfen bir şehir belirtin veya varsayılan olarak ayarlayın!`", del_in=0)
             return
     else:
         CITY = message.input_str
@@ -75,7 +75,7 @@ async def weather_get(message: Message):
             try:
                 countrycode = timezone_countries[f'{country}']
             except KeyError:
-                await message.edit("`Invalid country.`", del_in=0)
+                await message.edit("`Geçersiz Ülke.`", del_in=0)
                 return
             CITY = newcity[0].strip() + "," + countrycode.strip()
 
@@ -87,7 +87,7 @@ async def weather_get(message: Message):
     result = json.loads(res_text)
 
     if req_status != 200:
-        await message.edit(r"`Invalid country.. ¯\_(ツ)_/¯`", del_in=0)
+        await message.edit(r"`Geçersiz Ülke.. ¯\_(ツ)_/¯`", del_in=0)
         return
 
     cityname = result['name']
@@ -129,14 +129,14 @@ async def weather_get(message: Message):
         return xx
 
     await message.edit(
-        f"**Temperature:** `{celsius(curtemp)}°C | {fahrenheit(curtemp)}°F`\n"
+        f"**Sıcaklık:** `{celsius(curtemp)}°C | {fahrenheit(curtemp)}°F`\n"
         +
-        f"**Min. Temp.:** `{celsius(min_temp)}°C | {fahrenheit(min_temp)}°F`\n"
+        f"**Min. Sıcaklık:** `{celsius(min_temp)}°C | {fahrenheit(min_temp)}°F`\n"
         +
-        f"**Max. Temp.:** `{celsius(max_temp)}°C | {fahrenheit(max_temp)}°F`\n"
-        + f"**Humidity:** `{humidity}%`\n" +
-        f"**Wind:** `{kmph[0]} kmh | {mph[0]} mph, {findir}`\n" +
-        f"**Sunrise:** `{sun(sunrise)}`\n" +
-        f"**Sunset:** `{sun(sunset)}`\n\n\n" + f"**{desc}**\n" +
+        f"**Max. Sıcaklık:** `{celsius(max_temp)}°C | {fahrenheit(max_temp)}°F`\n"
+        + f"**Nem oranı:** `{humidity}%`\n" +
+        f"**Rüzgar:** `{kmph[0]} kmh | {mph[0]} mph, {findir}`\n" +
+        f"**Gündoğumu:** `{sun(sunrise)}`\n" +
+        f"**Günbatımı:** `{sun(sunset)}`\n\n\n" + f"**{desc}**\n" +
         f"`{cityname}, {fullc_n}`\n" + f"`{time}`")
-    await CHANNEL.log(f"check `{CITY}` weather results")
+    await CHANNEL.log(f"`{CITY}` için hava durumu sonuçları")

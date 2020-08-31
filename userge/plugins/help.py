@@ -9,14 +9,14 @@
 # All rights reserved.
 import random
 from math import ceil
-from uuid import uuid4
 import asyncio
 from typing import List, Callable, Dict, Union, Any
 from userge.utils import parse_buttons as pb
-from pyrogram import (
+from pyrogram import filters
+from pyrogram.types import (
     InlineQueryResultArticle, InputTextMessageContent,
     InlineKeyboardMarkup, InlineKeyboardButton,
-    Filters, CallbackQuery, InlineQuery, InlineQueryResultPhoto)
+    CallbackQuery, InlineQuery, InlineQueryResultPhoto)
 from pyrogram.errors.exceptions.bad_request_400 import MessageNotModified, MessageIdInvalid, MessageEmpty
 from userge import userge, Message, Config, get_collection, versions, get_version
 
@@ -39,22 +39,27 @@ BUTTON_BASE = get_collection("TEMP_BUTTON")
 
 
 REPO_X = InlineQueryResultArticle(
-                    id=uuid4(),
                     title="Repo",
                     input_message_content=InputTextMessageContent(
                         "**USERGE-X'in nasıl kurulacağı burada açıklanmıştır** "),
                     url="https://github.com/code-rgb/USERGE-X",
                     description="Kendin Kur",
                     thumb_url="https://i.imgur.com/1xsOo9o.png",
-                    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(                  
-                                    "🔥 USERGE-X Repo",
-                                    url="https://github.com/code-rgb/USERGE-X"),
-                                InlineKeyboardButton(
-                                    "🚀 USERGE-X'i Kurun",
-                                    url=("https://heroku.com/deploy?template="
-                                        "https://github.com/UsergeTeam/Userge/tree/master"))]]))
+                    reply_markup=InlineKeyboardMarkup(
+                        [[
+                            InlineKeyboardButton(                  
+                            "🔥 USERGE-X Repo",
+                            url="https://github.com/code-rgb/USERGE-X"),
+                            InlineKeyboardButton(
+                            "🚀 USERGE-X'i Kurun",
+                            url=("https://heroku.com/deploy?template="
+                            "https://github.com/hozansahin/USERGE-X/tree/alpha")
+                            )
+                        ]]
+                    )
+            )
 
-
+ 
 
 
 # Thanks boi @FLAMEPOSEIDON
@@ -64,7 +69,7 @@ ALIVE_IMGS = ["https://telegra.ph/file/11123ef7dff2f1e19e79d.jpg", "https://i.im
 "https://telegra.ph/file/86cc25c78ad667ca5e691.png"]
 
 ALIVE_INFO = f"""
-  **[USERGE-X](https://github.com/code-rgb/USERGE-X) Aktif ve Çalışıyor 🏃**
+  **[USERGE-X](https://github.com/hozansahin/USERGE-X) Aktif ve Çalışıyor 🏃**
 
  • 🐍 Python :  `v{versions.__python_version__}`
  • 🔥 Pyrogram :  `v{versions.__pyro_version__}`
@@ -140,7 +145,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                     show_alert=True)
         return wrapper
 
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"\((.+)\)(next|prev)\((\d+)\)"))
+    @ubot.on_callback_query(filters.regex(pattern=r"\((.+)\)(next|prev)\((\d+)\)"))
     @check_owner
     async def callback_next_prev(callback_query: CallbackQuery):
         cur_pos = str(callback_query.matches[0].group(1))
@@ -161,7 +166,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         await callback_query.edit_message_reply_markup(
             reply_markup=InlineKeyboardMarkup(buttons))
 
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"back\((.+)\)"))
+    @ubot.on_callback_query(filters.regex(pattern=r"back\((.+)\)"))
     @check_owner
     async def callback_back(callback_query: CallbackQuery):
         cur_pos = str(callback_query.matches[0].group(1))
@@ -170,7 +175,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             await callback_query.answer("ana menüdesiniz", show_alert=True)
             return
         if len(pos_list) == 2:
-            text = " **USERGE-X** Ana Menü "
+            text = "🔥𝐔𝐒𝐄𝐑𝐆𝐄-𝐗 ANA MENÜ 🔥"
             buttons = main_menu_buttons()
         elif len(pos_list) == 3:
             text, buttons = category_data(cur_pos)
@@ -179,7 +184,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         await callback_query.edit_message_text(
             text, reply_markup=InlineKeyboardMarkup(buttons))
 
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"enter\((.+)\)"))
+    @ubot.on_callback_query(filters.regex(pattern=r"enter\((.+)\)"))
     @check_owner
     async def callback_enter(callback_query: CallbackQuery):
         cur_pos = str(callback_query.matches[0].group(1))
@@ -193,7 +198,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         await callback_query.edit_message_text(
             text, reply_markup=InlineKeyboardMarkup(buttons))
 
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"((?:un)?load|(?:en|dis)able)\((.+)\)"))
+    @ubot.on_callback_query(filters.regex(pattern=r"((?:un)?load|(?:en|dis)able)\((.+)\)"))
     @check_owner
     async def callback_manage(callback_query: CallbackQuery):
         task = str(callback_query.matches[0].group(1))
@@ -213,13 +218,13 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         await callback_query.edit_message_text(
             text, reply_markup=InlineKeyboardMarkup(buttons))
 
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"^mm$"))
+    @ubot.on_callback_query(filters.regex(pattern=r"^mm$"))
     @check_owner
     async def callback_mm(callback_query: CallbackQuery):
         await callback_query.edit_message_text(
-            " **USERGE-X** Ana Menü ", reply_markup=InlineKeyboardMarkup(main_menu_buttons()))
+            " 🔥𝐔𝐒𝐄𝐑𝐆𝐄-𝐗 ANA MENÜ 🔥", reply_markup=InlineKeyboardMarkup(main_menu_buttons()))
 
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"^chgclnt$"))
+    @ubot.on_callback_query(filters.regex(pattern=r"^chgclnt$"))
     @check_owner
     async def callback_chgclnt(callback_query: CallbackQuery):
         if Config.USE_USER_FOR_CLIENT_CHECKS:
@@ -232,7 +237,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         await callback_query.edit_message_reply_markup(
             reply_markup=InlineKeyboardMarkup(main_menu_buttons()))
 
-    @ubot.on_callback_query(filters=Filters.regex(pattern=r"refresh\((.+)\)"))
+    @ubot.on_callback_query(filters.regex(pattern=r"refresh\((.+)\)"))
     @check_owner
     async def callback_exit(callback_query: CallbackQuery):
         cur_pos = str(callback_query.matches[0].group(1))
@@ -305,7 +310,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
     def plugin_data(cur_pos: str, p_num: int = 0):
         pos_list = cur_pos.split('|')
         plg = userge.manager.plugins[pos_list[2]]
-        text = f"""🔹 **--Eklenti Durumu--** 🔹
+        text = f"""🔹 **--Eklenti Detayları--** 🔹
 
 🎭 **Kategori** : `{pos_list[1]}`
 🔖 **İsim** : `{plg.name}`
@@ -346,12 +351,12 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
 ✅ **Yüklü mü?** : `{flt.is_loaded}`
 ➕ **Etkin mi?** : `{flt.is_enabled}`"""
         if hasattr(flt, 'about'):
-            text = f"""**--Komut Durumu--**
+            text = f"""**--Komut Detayları--**
 {flt_data}
 {flt.about}
 """
         else:
-            text = f"""⚖ **--Filtre Durumu--** ⚖
+            text = f"""⚖ **--Filtre Detayları--** ⚖
 {flt_data}
 """
         buttons = default_buttons(cur_pos)
@@ -382,10 +387,10 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         str_x = i_q.split(" ", 2)
         if inline_query.from_user and inline_query.from_user.id == Config.OWNER_ID or inline_query.from_user.id in Config.SUDO_USERS:
             MAIN_MENU = InlineQueryResultArticle(
-                        id=uuid4(),
+                        
                         title="Ana Menü",
                         input_message_content=InputTextMessageContent(
-                            " **USERGE-X** Ana Menüsü "
+                            " 🔥𝐔𝐒𝐄𝐑𝐆𝐄-𝐗 ANA MENÜ 🔥"
                         ),
                         url="https://github.com/code-rgb/USERGE-X",
                         description="Userge-X Ana Menü",
@@ -404,7 +409,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 results.append(
                         InlineQueryResultPhoto(
                             photo_url="https://coverfiles.alphacoders.com/123/123388.png",
-                            caption="Ben çözdüm **Hozan Şahin**",
+                            caption="Ben yaptım **Hozan Şahin**",
                             reply_markup=InlineKeyboardMarkup(owner)
                         )
                 )
@@ -412,13 +417,12 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             if string =="rick":
                 rick = [[
                         InlineKeyboardButton(
-                        text="Bağlantıya git", 
+                        text="🔍", 
                         url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                         )
                 ]]                           
                 results.append(
                         InlineQueryResultArticle(
-                            id=uuid4(),
                             title="Rick Roll değil",
                             input_message_content=InputTextMessageContent(
                                 "🔍 Arama Sonuçları"
@@ -448,7 +452,6 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                            [InlineKeyboardButton("Nik GApps", callback_data="nik_gapps")]]          
                 results.append(
                         InlineQueryResultArticle(
-                            id=uuid4(),
                             title="GApps",
                             input_message_content=InputTextMessageContent(
                                 "[\u200c](https://i.imgur.com/BZBMrfn.jpg) **En Güncel Android 10 arm64 GApps**" 
@@ -470,7 +473,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 ]]                           
                 results.append(
                         InlineQueryResultArticle(
-                            id=uuid4(),
+                            
                             title="Anket şeklinde Sorular Sorun",
                             input_message_content=InputTextMessageContent(txt),
                             description="kullanım @seninbot op Kediler sevimli mi?",
@@ -498,7 +501,6 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 else:    
                     results.append(
                                 InlineQueryResultArticle(
-                                    id=uuid4(),
                                     title=text,
                                     input_message_content=InputTextMessageContent(text),
                                     reply_markup=buttons
@@ -520,7 +522,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 
                     results.append(
                                 InlineQueryResultArticle(
-                                    id=uuid4(),
+                                    
                                     title="Gizli Bir Mesaj Gönder",
                                     input_message_content=InputTextMessageContent(f"☣️ <b>ÇOK GİZLİ!</b> bu mesaj {user_name} için. Sadece o açabilir."),
                                     description="secret @kullaniciadi iletmek istediğin mesaj",
@@ -532,7 +534,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                     buttons_h = [[InlineKeyboardButton("yardıma bak", callback_data="secret_btn_help")]]
                     results.append(
                                 InlineQueryResultArticle(
-                                    id=uuid4(),
+                                    
                                     title="Gizli Bir Mesaj Gönder",
                                     input_message_content=InputTextMessageContent("@seninbotun secret @kullaniciadi <senin mesajın>"),
                                     description="secret @kullaniciadi senin mesajın",
