@@ -33,16 +33,11 @@ async def check_update(message: Message):
     """ güncellemeleri kontrol et veya güncelle """
     await message.edit("`Güncellemeler kontrol ediliyor, lütfen bekleyin...`")
     repo = Repo()
-    ups_rem = repo.remote(Config.UPSTREAM_REMOTE)
     try:
-        ups_rem.fetch()
+        repo.remote(Config.UPSTREAM_REMOTE).fetch()
     except GitCommandError as error:
         await message.err(error, del_in=5)
         return
-    for ref in ups_rem.refs:
-        branch = str(ref).split('/')[-1]
-        if branch not in repo.branches:
-            repo.create_head(branch, ref)
     flags = list(message.flags)
     pull_from_repo = False
     push_to_heroku = False
@@ -82,9 +77,9 @@ async def check_update(message: Message):
         return
     if not push_to_heroku:
         await message.edit(
-            '**Userge Başarıyla Güncellendi!**\n'
-            '`Şimdi yeniden başlatılıyor ... Lütfen bir süre bekleyin!`', del_in=3)
-        asyncio.get_event_loop().create_task(userge.restart(update_req=True))
+            '**Userge Successfully Updated!**\n'
+            '`Now restarting... Wait for a while!`', del_in=3)
+        asyncio.get_event_loop().create_task(userge.restart(True))
         return
     if not Config.HEROKU_GIT_URL:
         await message.err("lütfen heroku değişkenlerini ayarlayın ...")

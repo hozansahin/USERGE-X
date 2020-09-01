@@ -24,8 +24,9 @@ _LEVELS = {
 @userge.on_cmd("logs", about={
     'header': "USERGE-X Loglarını kontrol edin",
     'flags': {
-        '-h': "heroku Loglarını getir",
-        '-l': "heroku Log satırı sınırı: varsayılan 100"}}, allow_channels=False)
+        '-d': "get logs in document",
+        '-h': "get heroku logs",
+        '-l': "heroku logs lines limit : default 100"}}, allow_channels=False)
 async def check_logs(message: Message):
     """ Logları kontrol et """
     await message.edit("`Loglar kontrol ediliyor ...`")
@@ -36,7 +37,7 @@ async def check_logs(message: Message):
                                           text=logs,
                                           filename='userge-heroku.log',
                                           caption=f'userge-heroku.log [ {limit} lines ]')
-    else:
+    elif not '-d'  in message.flags:
         with open("logs/userge.log", 'r') as d_f:
             text = d_f.read()
         file_ext = '.txt'
@@ -47,12 +48,20 @@ async def check_logs(message: Message):
                     key = response['result']['key']
                     final_url = NEKOBIN_URL + key + file_ext
                     final_url_raw = f"{NEKOBIN_URL}raw/{key}{file_ext}"
-                    reply_text = "**İşte USERGE-X Logları** - \n"
-                    reply_text += f"• [Nekobin]({final_url})\n"
-                    reply_text += f"• [[Raw]]({final_url_raw})"
+                    reply_text = "**Here Are Your Logs-X** : \n"
+                    reply_text += f"• [NEKO]({final_url})            • [RAW]({final_url_raw})"
                     await message.edit(reply_text, disable_web_page_preview=True)
                 else:
-                    await message.err("Nekobin'e ulaşılamadı..")
+                    await message.edit("Failed to reach Nekobin !")
+                    await message.client.send_document(chat_id=message.chat.id,
+                                           document="logs/userge.log",
+                                           caption='**USERGE-X Logs**')
+    else:
+        await message.delete()
+        await message.client.send_document(chat_id=message.chat.id,
+                                           document="logs/userge.log",
+                                           caption='**USERGE-X Logs**')
+
         
 
 

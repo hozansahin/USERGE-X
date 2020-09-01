@@ -8,7 +8,7 @@
 #
 # All rights reserved.
 
-__all__ = ['Config']
+__all__ = ['Config', 'get_version']
 
 import os
 from typing import Set
@@ -27,13 +27,13 @@ logbot.reply_last_msg("Yapılandırma Ayarlanıyor ...")
 
 class Config:
     """ Configs to setup Userge """
-    API_ID = int(os.environ.get("API_ID", 0))
+    API_ID = int(os.environ.get("API_ID"))
     API_HASH = os.environ.get("API_HASH")
-    WORKERS = int(os.environ.get("WORKERS", 0))
+    WORKERS = int(os.environ.get("WORKERS"))
     BOT_TOKEN = os.environ.get("BOT_TOKEN", None)
     HU_STRING_SESSION = os.environ.get("HU_STRING_SESSION", None)
     OWNER_ID = int(os.environ.get("OWNER_ID", 0))
-    LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID", 0))
+    LOG_CHANNEL_ID = int(os.environ.get("LOG_CHANNEL_ID"))
     DB_URI = os.environ.get("DATABASE_URL")
     LANG = os.environ.get("PREFERRED_LANGUAGE")
     DOWN_PATH = os.environ.get("DOWN_PATH")
@@ -93,13 +93,29 @@ if Config.HEROKU_API_KEY:
     logbot.del_last_msg()
 
 
+try:
+    for ref in _REPO.remote(Config.UPSTREAM_REMOTE).refs:
+        branch = str(ref).split('/')[-1]
+        if branch not in _REPO.branches:
+            _REPO.create_head(branch, ref)
+except ValueError as v_e:
+    _LOG.error(v_e)
+
+
 def get_version() -> str:
     """ get userge version """
     ver = f"{versions.__major__}.{versions.__minor__}.{versions.__micro__}"
-    if "/usergeteam/userge" in Config.UPSTREAM_REPO.lower():
-        diff = list(_REPO.iter_commits('v0.1.6..HEAD'))  # temp solution
-        if diff:
-            return f"{ver}-[X].{len(diff)}"
+    try:
+        if "/code-rgb/userge-x" in Config.UPSTREAM_REPO.lower():
+            diff = list(_REPO.iter_commits(f'v{ver}..HEAD'))
+            if diff:
+                return f"{ver}-[X].{len(diff)}"
+        else:
+            diff = list(_REPO.iter_commits(f'{Config.UPSTREAM_REMOTE}/master..HEAD'))
+            if diff:
+                return f"{ver}-fork-[X].{len(diff)}"
     except:
-        error = "Sürümü almak için alfa'yı bir kez güncelleyin."
+        error = "Update Repo"
         return error
+    return ver
+        

@@ -9,8 +9,8 @@
         "userbot"
     ],
     "repository": "https://github.com/code-rgb/USERGE-X",
-    "website": "https://github.com/Userge",
-    "success_url": "https://t.me/theUserge",
+    "website": "https://github.com/code-rgb/USERGE-X",
+    "success_url": "https://github.com/code-rgb/USERGE-X",
     "env": {
         "API_ID": {"description": "Bu değeri şuradan alın https://my.telegram.org"},
         "API_HASH": {"description": "Bu değeri şuradan alın https://my.telegram.org"},
