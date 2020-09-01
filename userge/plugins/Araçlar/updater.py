@@ -22,7 +22,7 @@ CHANNEL = userge.getCLogger(__name__)
     'flags': {
         '-pull': "güncellemeleri getir",
         '-push': "güncellemeleri heroku'ya aktar",
-        '-alpha': "alpha sürümü için al,
+        '-alpha': "alpha sürümü için al",
         '-develop': "Geliştirme sürümü için al"},
     'usage': "{tr}update : varsayılan güncellemeleri kontrol edin\n"
              "{tr}update -[sürüm] : herhangi bir sürüm için güncellemeleri kontrol edin\n"
@@ -77,8 +77,8 @@ async def check_update(message: Message):
         return
     if not push_to_heroku:
         await message.edit(
-            '**Userge Successfully Updated!**\n'
-            '`Now restarting... Wait for a while!`', del_in=3)
+            '**Userge-x Başarıyla Güncellendi!**\n'
+            '`Şimdi yeniden başlatılıyor... Lütfen Biraz bekle!', del_in=3)
         asyncio.get_event_loop().create_task(userge.restart(True))
         return
     if not Config.HEROKU_GIT_URL:
