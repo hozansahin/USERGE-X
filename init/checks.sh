@@ -14,17 +14,17 @@ _checkBashReq() {
 }
 
 _checkPythonVersion() {
-    log "Python Sürümü kontrol ediliyor ...""
+    log "Python Sürümü kontrol ediliyor ..."
     ( test -z $pVer || test $(sed 's/\.//g' <<< $pVer) -lt 380 ) \
         && quit "You MUST have a python version of at least 3.8.0 !"
     log "\tFound PYTHON - v$pVer ..."
 }
 
 _checkConfigFile() {
-    log "Checking Config File ..."
+    log "Yapılandırma Dosyası Kontrol Ediliyor ..."
     configPath="config.env"
     if test -f $configPath; then
-        log "\tConfig file found : $configPath, Exporting ..."
+        log "\tYapılandırma dosyası bulundu : $configPath, Aktarılıyor ..."
         set -a
         . $configPath
         set +a
