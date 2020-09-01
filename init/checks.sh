@@ -9,12 +9,12 @@
 # All rights reserved.
 
 _checkBashReq() {
-    log "Bash Komutları Kontrol Ediliyor ..."
-    command -v jq &> /dev/null || quit "Gerekli komut: jq : bulunamadı!"
+    log "Checking Bash Commands ..."
+    command -v jq &> /dev/null || quit "Required command : jq : could not be found !"
 }
 
 _checkPythonVersion() {
-    log "Python Sürümü kontrol ediliyor ..."
+    log "Checking Python Version ..."
     ( test -z $pVer || test $(sed 's/\.//g' <<< $pVer) -lt 380 ) \
         && quit "You MUST have a python version of at least 3.8.0 !"
     log "\tFound PYTHON - v$pVer ..."
@@ -34,7 +34,7 @@ _checkConfigFile() {
 }
 
 _checkRequiredVars() {
-    log "Gerekli ENV Dosyası Kontrol Ediliyor ..."
+    log "Checking Required ENV Vars ..."
     for var in API_ID API_HASH LOG_CHANNEL_ID DATABASE_URL; do
         test -z ${!var} && quit "Required $var var !"
     done
@@ -44,7 +44,7 @@ _checkRequiredVars() {
 }
 
 _checkDefaultVars() {
-    replyLastMessage "Varsayılan ENV dosyası Kontrol Ediliyor ..."
+    replyLastMessage "Checking Default ENV Vars ..."
     declare -rA def_vals=(
         [WORKERS]=4
         [PREFERRED_LANGUAGE]="en"
@@ -74,7 +74,7 @@ _checkDefaultVars() {
 }
 
 _checkDatabase() {
-    editLastMessage "DATABASE_URL kontrol ediliyor ..."
+    editLastMessage "Checking DATABASE_URL ..."
     local err=$(runPythonCode '
 import pymongo
 try:
@@ -85,13 +85,13 @@ except Exception as e:
 }
 
 _checkTriggers() {
-    editLastMessage "KOMUTLAR kontrol ediliyor ......"
+    editLastMessage "Checking TRIGGERS ..."
     test $CMD_TRIGGER = $SUDO_TRIGGER \
         && quit "Invalid SUDO_TRIGGER!, You can't use $CMD_TRIGGER as SUDO_TRIGGER"
 }
 
 _checkPaths() {
-    editLastMessage "Dizinler Kontrol Ediliyor ..."
+    editLastMessage "Checking Paths ..."
     for path in $DOWN_PATH logs bin; do
         test ! -d $path && {
             log "\tCreating Path : ${path%/} ..."
@@ -101,29 +101,29 @@ _checkPaths() {
 }
 
 _checkBins() {
-    editLastMessage "BINS kontrol ediliyor ..."
+    editLastMessage "Checking BINS ..."
     declare -rA bins=(
         [bin/megadown]="https://raw.githubusercontent.com/yshalsager/megadown/master/megadown"
         [bin/cmrudl]="https://raw.githubusercontent.com/yshalsager/cmrudl.py/master/cmrudl.py"
     )
     for bin in ${!bins[@]}; do
         test ! -f $bin && {
-            log "\tİndiriliyor $bin ..."
+            log "\tDownloading $bin ..."
             curl -so $bin ${bins[$bin]}
         }
     done
 }
 
 _checkGit() {
-    editLastMessage "GIT kontrol ediliyor ..."
+    editLastMessage "Checking GIT ..."
     if test ! -d .git; then
         if test ! -z $HEROKU_GIT_URL; then
-            replyLastMessage "\tHeroku Git klonlanıyor ..."
+            replyLastMessage "\tClonning Heroku Git ..."
             gitClone $HEROKU_GIT_URL tmp_git || quit "Invalid HEROKU_API_KEY or HEROKU_APP_NAME var !"
             mv tmp_git/.git .
             rm -rf tmp_git
         else
-            replyLastMessage "\tBoş Git Başlatılıyor ..."
+            replyLastMessage "\tInitializing Empty Git ..."
             gitInit
         fi
         deleteLastMessage
@@ -131,7 +131,7 @@ _checkGit() {
 }
 
 _checkUpstreamRepo() {
-    editLastMessage "UPSTREAM_REPO kontrol ediliyor ..."
+    editLastMessage "Checking UPSTREAM_REPO ..."
     grep -q $UPSTREAM_REMOTE < <(git remote) || addUpstream
     replyLastMessage "\tFetching Data From UPSTREAM_REPO ..."
     fetchUpstream || updateUpstream && fetchUpstream || quit "Invalid UPSTREAM_REPO var !"
@@ -139,24 +139,24 @@ _checkUpstreamRepo() {
 }
 
 _checkUnoffPlugins() {
-    editLastMessage "Userge-X [Ekstra] Eklentileri kontrol ediliyor ..."
+    editLastMessage "Checking Userge-X [Extra] Plugins ..."
     if test $LOAD_UNOFFICIAL_PLUGINS = true; then
-        editLastMessage "\tUserge-X [Ekstra] Eklentileri Yükleniyor..."
-        replyLastMessage "\t\tKlonlanıyor ..."
+        editLastMessage "\tLoading Userge-X [Extra] Plugins ..."
+        replyLastMessage "\t\tClonning ..."
         gitClone --depth=1 https://github.com/code-rgb/Userge-Plugins.git
-        editLastMessage "\t\tPIP sürümü yükseltiliyor..."
+        editLastMessage "\t\tUpgrading PIP ..."
         upgradePip
-        editLastMessage "\t\tGerkli bağımlılıklar yükleniyor ..."
+        editLastMessage "\t\tInstalling Requirements ..."
         installReq Userge-Plugins
-        editLastMessage "\t\tArda kalanlar temizleniyor ..."
+        editLastMessage "\t\tCleaning ..."
         rm -rf userge/plugins/unofficial/
         mv Userge-Plugins/plugins/ userge/plugins/unofficial/
         cp -r Userge-Plugins/resources/* resources/
         rm -rf Userge-Plugins/
         deleteLastMessage
-        editLastMessage "\tUserge-X [Ekstra] Eklentiler Başarıyla Yüklendi!"
+        editLastMessage "\tUserge-X [Extra] Plugins Loaded Successfully !"
     else
-        editLastMessage "\tUserge-X [Ekstra] Eklentiler Devre Dışı!"
+        editLastMessage "\tUserge-X [Extra] Plugins Disabled !"
     fi
     sleep 1
     deleteLastMessage
