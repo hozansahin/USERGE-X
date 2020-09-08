@@ -9,15 +9,15 @@
 # All rights reserved.
 
 sendMessage() {
-    rawsendMessage $LOG_CHANNEL_ID "$1"
+    test -z "$1" || rawsendMessage $LOG_CHANNEL_ID "$1"
 }
 
 replyLastMessage() {
-    getLastMessage reply "$1"
+    test -z "$1" || getLastMessage reply "$1"
 }
 
 editLastMessage() {
-    getLastMessage edit "$1"
+    test -z "$1" || getLastMessage edit "$1"
 }
 
 deleteLastMessage() {
@@ -40,6 +40,10 @@ printMessages() {
 
 startLogBotPolling() {
     test -z $BOT_TOKEN || _polling &
+}
+
+endLogBotPolling() {
+    test -z $BOT_TOKEN || echo quit >> logs/logbot.stdin
 }
 
 _polling() {
@@ -66,6 +70,7 @@ _polling() {
         sleep 1
     done
     log "LogBot Polling Ended with SIGTERM !"
+    rm -f $input
     exit 0
 }
 

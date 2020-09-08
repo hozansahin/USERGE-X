@@ -46,7 +46,7 @@ _checkRequiredVars() {
 _checkDefaultVars() {
     replyLastMessage "Varsayılan ENV dosyası Kontrol Ediliyor ..."
     declare -rA def_vals=(
-        [WORKERS]=4
+        [WORKERS]=0
         [PREFERRED_LANGUAGE]="en"
         [DOWN_PATH]="downloads"
         [UPSTREAM_REMOTE]="upstream"

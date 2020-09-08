@@ -22,28 +22,29 @@ from pyrogram.errors.exceptions.bad_request_400 import MessageNotModified, Messa
 from userge import userge, Message, Config, get_collection, versions, get_version
 import json
 import os
+import requests
+from html_telegraph_poster import TelegraphPoster
 
-if not os.path.exists('userge/xcache'):
-    os.mkdir('userge/xcache')
-SECRETS = "userge/xcache/secrets.txt"
-#TEMP_BUTTON = "userge/xcache/button.txt"
+PATH = "userge/xcache"
 
+if not os.path.exists(PATH):
+    os.mkdir(PATH)
 
 _CATEGORY = {
-    'Yönetim': '🙋🏻‍♂️',
-    'Eğlence': '🎨',
-    'Çeşitli': '🧩',
-    'Araçlar': '🧰',
-    'Aletler': '🗂',
-    'Resmi Olmayan': '➕',
-    'Geçici': '♻️',
-    'Eklentiler': '💎',
-    'Satır İçi' : '🔰' 
+    'admin': '🙋🏻‍♂️',
+    'fun': '🎨',
+    'misc': '🧩',
+    'tools': '🧰',
+    'utils': '🗂',
+    'unofficial': '➕',
+    'temp': '♻️',
+    'plugins': '💎',
+    'bot' : '🔰' 
 }
 # Database
 SAVED_SETTINGS = get_collection("CONFIGS")
 
-BUTTON_BASE = get_collection("TEMP_BUTTON")
+BUTTON_BASE = get_collection("TEMP_BUTTON") # TODO use json cache
 
 
 REPO_X = InlineQueryResultArticle(
@@ -76,13 +77,7 @@ ALIVE_IMGS = ["https://telegra.ph/file/11123ef7dff2f1e19e79d.jpg", "https://i.im
 "https://telegra.ph/file/995c75983a6c0e4499b55.png",
 "https://telegra.ph/file/86cc25c78ad667ca5e691.png"]
 
-ALIVE_INFO = f"""
-  **[USERGE-X](https://github.com/hozansahin/USERGE-X) Aktif ve Çalışıyor 🏃**
 
- • 🐍 Python :  `v{versions.__python_version__}`
- • 🔥 Pyrogram :  `v{versions.__pyro_version__}`
- • 🧬 𝑿 :  `v{get_version()}`
-"""
 
 async def _init() -> None:
     data = await SAVED_SETTINGS.find_one({'_id': 'CURRENT_CLIENT'})
@@ -393,6 +388,8 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         i_q = inline_query.query
         string = i_q.lower()
         str_x = i_q.split(" ", 2)
+        string_split = string.split()
+
         if inline_query.from_user and inline_query.from_user.id == Config.OWNER_ID or inline_query.from_user.id in Config.SUDO_USERS:
             MAIN_MENU = InlineQueryResultArticle(
                         
@@ -446,10 +443,20 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 buttons = [[InlineKeyboardButton("🔧 AYARLAR", callback_data="settings_btn"),
                             InlineKeyboardButton(text="⚡️ REPO", url=Config.UPSTREAM_REPO)]]
 
+                alive_info = f"""
+    **[USERGE-X](https://github.com/code-rgb/USERGE-X) is Up and Running**
+
+ • 🐍 Python :  `v{versions.__python_version__}`
+ • 🔥 Pyrogram :  `v{versions.__pyro_version__}`
+ • 🧬 𝑿 :  `v{get_version()}`
+
+    🕔 Uptime : {userge.uptime}
+"""
+
                 results.append(
                         InlineQueryResultPhoto(
                             photo_url=random_alive,
-                            caption=ALIVE_INFO,
+                            caption=alive_info,
                             reply_markup=InlineKeyboardMarkup(buttons)
                         )
                 )
@@ -479,14 +486,77 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                         )
                 )
 
+            if len(string_split) == 2:     #workaround for list index out of range
+                if string_split[0] == "ofox":
+                    codename = string_split[1]
+                    t = TelegraphPoster(use_api=True)
+                    t.create_api_token('Userge-X')
+                    photo = "https://i.imgur.com/582uaSk.png" 
+                    api_host = 'https://api.orangefox.download/v2/device/'
+                    try:
+                        cn = requests.get(f"{api_host}{codename}")
+                        r = cn.json()
+                    except ValueError:
+                        return
+                    s = requests.get(f"{api_host}{codename}/releases/stable/last").json()
+                    info = f"📱 **Device**: {r['fullname']}\n"
+                    info += f"👤 **Maintainer**: {r['maintainer']['name']}\n\n"
+                    recovery = f"🦊 <code>{s['file_name']}</code>\n"
+                    recovery+= f"📅 {s['date']}\n"
+                    recovery += f"ℹ️ **Version:** {s['version']}\n"
+                    recovery+= f"📌 **Build Type:** {s['build_type']}\n"
+                    recovery+= f"🔰 **Size:** {s['size_human']}\n\n"
+                    recovery+= "📍 **Changelog:**\n"
+                    recovery+= f"<code>{s['changelog']}</code>\n\n" 
+                    msg = info
+                    msg += recovery
+                    notes_ = s.get('notes')
+                    if notes_: 
+                        notes = t.post(
+                        title='READ Notes', 
+                        author="", 
+                        text=notes_
+                        )
+                        buttons = [[InlineKeyboardButton("🗒️ NOTES", url=notes['url']),
+                                    InlineKeyboardButton("⬇️ DOWNLOAD", url=s['url'])]]
+                    else:
+                        buttons = [[InlineKeyboardButton(text="⬇️ DOWNLOAD", url=s['url'])]]
+
+                    results.append(
+                            InlineQueryResultPhoto(
+                                photo_url=photo,
+                                thumb_url="https://i.imgur.com/o0onLYB.jpg",
+                                title="Latest OFOX RECOVERY",
+                                description=f"For device : {codename}",
+                                caption=msg,
+                                reply_markup=InlineKeyboardMarkup(buttons)
+                            )
+                    )
+
             if string =="repo":        
                 results.append(REPO_X)
 
             if str_x[0].lower() == "op" and len(str_x) > 1:        
-                txt = i_q[3:]
+                txt = i_q[3:]          # TODO change it
+
+                opinion = os.path.join(PATH, "emoji_data.txt")
+                try:
+                    view_data = json.load(open(opinion))
+                except:
+                    view_data = False
+
+                if view_data:
+                    # Uniquely identifies an inline message
+                    new_id = {int(inline_query.id) : [{}]}
+                    view_data.update(new_id)
+                    json.dump(view_data, open(opinion,'w'))
+                else:
+                    d = {int(inline_query.id) : [{}]}
+                    json.dump(d, open(opinion,'w'))
+
                 buttons = [[
-                        InlineKeyboardButton("👍", callback_data="opinion_y"),
-                        InlineKeyboardButton("👎", callback_data="opinion_n")
+                        InlineKeyboardButton("👍", callback_data=f"op_y_{inline_query.id}"),
+                        InlineKeyboardButton("👎", callback_data=f"op_n_{inline_query.id}")
                 ]]                           
                 results.append(
                         InlineQueryResultArticle(
@@ -533,27 +603,24 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                         user_id = a.id
                     except:
                         return
-                    buttons = [[InlineKeyboardButton("🔐 GÖSTER", callback_data="secret_btn")]]
+                    secret = os.path.join(PATH, "secret.txt")
                     try:
-                        view_data = json.load(open(SECRETS))
+                        view_data = json.load(open(secret))
                     except:
                         view_data = False
 
                     if view_data:
                         # Uniquely identifies an inline message
-                        new_id = {inline_query.id : {'user_id': user_id, 'msg': msg}}
+                        new_id = {str(inline_query.id) : {'user_id': user_id, 'msg': msg}}
                         view_data.update(new_id)
-                        json.dump(view_data, open(SECRETS,'w'))
+                        json.dump(view_data, open(secret,'w'))
                     else:
-                        d = {inline_query.id : {'user_id': user_id, 'msg': msg}}
-                        json.dump(d, open(SECRETS,'w'))
+                        d = {str(inline_query.id) : {'user_id': user_id, 'msg': msg}}
+                        json.dump(d, open(secret,'w'))
                     
                     buttons = [[InlineKeyboardButton("🔐 REVEAL", callback_data=f"secret_{inline_query.id}")]]
                     results.append(
                                 InlineQueryResultArticle(
-                                    title="Gizli Bir Mesaj Gönder",
-                                    input_message_content=InputTextMessageContent(f"☣️ <b>ÇOK GİZLİ!</b> bu mesaj {user_name} için. Sadece o açabilir."),
-                                    description="secret @kullaniciadi iletmek istediğin mesaj",
                                     title="Send A Secret Message",
                                     input_message_content=InputTextMessageContent(f"📩 <b>TOPSECRET!</b> for {user_name}. Only he/she can open it."),
                                     description=f"Send Secret Message to: {user_name}",
@@ -564,8 +631,6 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 else:
                     results = [(
                                 InlineQueryResultArticle(
-                                    title="Gizli Bir Mesaj Gönder",
-                                    description="secret @kullaniciadi senin mesajın",
                                     title="Send A Secret Message",
                                     input_message_content=InputTextMessageContent("Do `.secret` for more info"),
                                     description="secret @username message ..."

@@ -29,7 +29,7 @@ class Config:
     """ Configs to setup Userge """
     API_ID = int(os.environ.get("API_ID"))
     API_HASH = os.environ.get("API_HASH")
-    WORKERS = int(os.environ.get("WORKERS"))
+    WORKERS = min(32, int(os.environ.get("WORKERS")) or os.cpu_count() + 4)
     BOT_TOKEN = os.environ.get("BOT_TOKEN", None)
     HU_STRING_SESSION = os.environ.get("HU_STRING_SESSION", None)
     OWNER_ID = int(os.environ.get("OWNER_ID", 0))
@@ -80,6 +80,7 @@ class Config:
     RUN_DYNO_SAVER = False
     HEROKU_APP = None
     STATUS = None
+    BOT_FORWARDS = False
 
 
 if Config.HEROKU_API_KEY:
@@ -107,7 +108,7 @@ def get_version() -> str:
     ver = f"{versions.__major__}.{versions.__minor__}.{versions.__micro__}"
     try:
         if "/code-rgb/userge-x" in Config.UPSTREAM_REPO.lower():
-            diff = list(_REPO.iter_commits("v0.2.1..HEAD"))
+            diff = list(_REPO.iter_commits("v0.2.2..HEAD"))
             if diff:
                 return f"{ver}-Mystique.{len(diff)}"
         else:

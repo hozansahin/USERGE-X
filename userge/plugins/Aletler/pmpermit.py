@@ -212,9 +212,10 @@ async def uninvitedPmHandler(message: Message):
     else:
         pmCounter.update({message.from_user.id: 1})
         await message.reply(
+        await asyncio.sleep(1)            noPmMessage.format_map(SafeDict(**user_dict)) + '\n`- `')
             noPmMessage.format_map(SafeDict(**user_dict)) + '\n`-USERGE-X tarafından korunmaktadır`')
         await asyncio.sleep(1)
-        await CHANNEL.log(f"#NEW_MESSAGE\n{user_dict['mention']} has messaged you")
+        await CHANNEL.log(f"#GELEN_MESAJ\n{user_dict['mention']} sana mesaj attı")
 
 
 @userge.on_filters(~allowAllFilter & filters.outgoing

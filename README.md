@@ -30,7 +30,8 @@
 
 ## Nasıl kullanılır ??
 
-DEVAMI EKLENECEK...
+* [Heroku Ayarları](https://telegra.ph/Heroku-Vars-for-USERGE-X-08-25)
+* Bakınız [Heroku Kullanum Kılavuzu](https://github.com/code-rgb/USERGE-X#how-to-deploy)
 
 
 ## feragatname
@@ -59,7 +60,7 @@ DEVAMI EKLENECEK...
 <a href = "https://heroku.com/deploy?template=https://github.com/code-rgb/USERGE-X/tree/alpha"><img src="https://telegra.ph/file/57c4edb389224c9cf9996.png" alt="Kullanım İçin Tıklayın" width="490px"></a></p>
 <br>
 
-<h3><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Videolu Anlatım (Heroku Yöntemi)</a></h3>
+<h3>HEROKU Method</h3>
 
 <b>Önce Yukarıdaki BUTONA tıklayın</b> 
 
@@ -100,3 +101,7 @@ DEVAMI EKLENECEK...
 
 * Copyright (C) 2020 by [UsergeTeam](https://github.com/UsergeTeam) 
 * [GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007](https://github.com/code-rgb/Userge/blob/master/LICENSE) Standartlarına göre lisanslanmıştır.
+
+
+
+<h3 align="center"> >>><a href="https://t.me/x_xtests">Destek Grubu</a><<< </h3>

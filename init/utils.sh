@@ -17,13 +17,13 @@ log() {
 }
 
 quit() {
-    local err="\t:: ERROR :: $1\nExiting With SIGTERM ..."
+    local err="\t:: ERROR :: $1\nExiting With SIGTERM (143) ..."
     if (( getMessageCount )); then
         replyLastMessage "$err"
     else
         log "$err"
     fi
-    exit 1
+    exit 143
 }
 
 runPythonCode() {
