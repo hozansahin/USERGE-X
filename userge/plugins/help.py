@@ -20,6 +20,13 @@ from pyrogram.types import (
     InlineQueryResultAnimation)
 from pyrogram.errors.exceptions.bad_request_400 import MessageNotModified, MessageIdInvalid, MessageEmpty
 from userge import userge, Message, Config, get_collection, versions, get_version
+import json
+import os
+
+if not os.path.exists('userge/xcache'):
+    os.mkdir('userge/xcache')
+SECRETS = "userge/xcache/secrets.txt"
+#TEMP_BUTTON = "userge/xcache/button.txt"
 
 
 _CATEGORY = {
@@ -35,7 +42,7 @@ _CATEGORY = {
 }
 # Database
 SAVED_SETTINGS = get_collection("CONFIGS")
-SECRET_MSG = get_collection("SECRET_MSG")
+
 BUTTON_BASE = get_collection("TEMP_BUTTON")
 
 
@@ -74,7 +81,7 @@ ALIVE_INFO = f"""
 
  • 🐍 Python :  `v{versions.__python_version__}`
  • 🔥 Pyrogram :  `v{versions.__pyro_version__}`
- • 🧬 USERGE-𝑿 :  `v{get_version()}`
+ • 🧬 𝑿 :  `v{get_version()}`
 """
 
 async def _init() -> None:
@@ -527,35 +534,53 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                     except:
                         return
                     buttons = [[InlineKeyboardButton("🔐 GÖSTER", callback_data="secret_btn")]]
-                    await SECRET_MSG.drop()
-                    SECRET_MSG.insert_one({'user_id': user_id, 'msg': msg})
-                
+                    try:
+                        view_data = json.load(open(SECRETS))
+                    except:
+                        view_data = False
+
+                    if view_data:
+                        # Uniquely identifies an inline message
+                        new_id = {inline_query.id : {'user_id': user_id, 'msg': msg}}
+                        view_data.update(new_id)
+                        json.dump(view_data, open(SECRETS,'w'))
+                    else:
+                        d = {inline_query.id : {'user_id': user_id, 'msg': msg}}
+                        json.dump(d, open(SECRETS,'w'))
+                    
+                    buttons = [[InlineKeyboardButton("🔐 REVEAL", callback_data=f"secret_{inline_query.id}")]]
                     results.append(
                                 InlineQueryResultArticle(
-                                    
                                     title="Gizli Bir Mesaj Gönder",
                                     input_message_content=InputTextMessageContent(f"☣️ <b>ÇOK GİZLİ!</b> bu mesaj {user_name} için. Sadece o açabilir."),
                                     description="secret @kullaniciadi iletmek istediğin mesaj",
-                                    thumb_url="https://i.imgur.com/lx3nT7p.png",
+                                    title="Send A Secret Message",
+                                    input_message_content=InputTextMessageContent(f"📩 <b>TOPSECRET!</b> for {user_name}. Only he/she can open it."),
+                                    description=f"Send Secret Message to: {user_name}",
+                                    thumb_url="https://i.imgur.com/c5pZebC.png",
                                     reply_markup=InlineKeyboardMarkup(buttons)
                                 )
                     )
                 else:
-                    buttons_h = [[InlineKeyboardButton("yardıma bak", callback_data="secret_btn_help")]]
-                    results.append(
+                    results = [(
                                 InlineQueryResultArticle(
-                                    
                                     title="Gizli Bir Mesaj Gönder",
-                                    input_message_content=InputTextMessageContent("@seninbotun secret @kullaniciadi <senin mesajın>"),
                                     description="secret @kullaniciadi senin mesajın",
-                                    #thumb_url="https://i.imgur.com/lx3nT7p.png"
-                                    reply_markup=InlineKeyboardMarkup(buttons_h)
+                                    title="Send A Secret Message",
+                                    input_message_content=InputTextMessageContent("Do `.secret` for more info"),
+                                    description="secret @username message ..."
                                 )
+                    )]
+                    await inline_query.answer(
+                        results=results,
+                        cache_time=1,
+                        switch_pm_text="🔒 SECRETS",
+                        switch_pm_parameter="start"
                     )
-        
+                    return
         else:
             results.append(REPO_X)
-        try: 
+        try:
             if not len(results) == 0:
                 await inline_query.answer(results=results, cache_time=1)
         except MessageEmpty:
