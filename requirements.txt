@@ -39,4 +39,5 @@ youtube_dl
 jikanpy
 nekos.py
 html-telegraph-poster
-igramscraper
+git+https://github.com/code-rgb/pytube3.git
+pafy
