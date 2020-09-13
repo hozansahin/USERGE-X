@@ -21,24 +21,17 @@ CHANNEL = userge.getCLogger(__name__)
 @userge.on_cmd("update", about={
     'header': "Güncellemeleri Kontrol Et ve Botu Güncelle",
     'flags': {
-        '-pull': "güncellemeleri getir",
-        '-push': "güncellemeleri heroku'ya aktar",
-        '-alpha': "alpha sürümü için al",
-        '-develop': "Geliştirme sürümü için al"},
-    'usage': "{tr}update : varsayılan güncellemeleri kontrol edin\n"
-             "{tr}update -[sürüm] : herhangi bir sürüm için güncellemeleri kontrol edin\n"
-             "güncellemeleri getirmek istiyorsan -pull Ekle\n"
-             "herokuya güncellemeleri göndermek istiyorsanız -push ekleyin",
-    'examples': "{tr}update -alpha -pull -push"}, del_pre=True, allow_channels=False)
+        '-pull': "pull updates",
+        '-push': "push updates to heroku",
+        '-branch': "Default is -alpha"},
+    'usage': "{tr}update : check updates from default branch\n"
+             "{tr}update -[branch_name] : check updates from any branch\n"
+             "add -pull if you want to pull updates\n"
+             "add -push if you want to push updates to heroku",
+    'examples': "{tr}update -pull -push"}, del_pre=True, allow_channels=False)
 async def check_update(message: Message):
-    """ güncellemeleri kontrol et veya güncelle """
-    await message.edit("`Güncellemeler kontrol ediliyor, lütfen bekleyin...`")
-    repo = Repo()
-    try:
-        repo.remote(Config.UPSTREAM_REMOTE).fetch()
-    except GitCommandError as error:
-        await message.err(error, del_in=5)
-        return
+    """ check or do updates """
+    await message.edit("`Checking for updates, please wait....`")
     flags = list(message.flags)
     pull_from_repo = False
     push_to_heroku = False
@@ -47,64 +40,79 @@ async def check_update(message: Message):
         pull_from_repo = True
         flags.remove("pull")
     if "push" in flags:
+        if not Config.HEROKU_APP:
+            await message.err("HEROKU APP : could not be found !")
+            return
         push_to_heroku = True
         flags.remove("push")
     if len(flags) == 1:
         branch = flags[0]
+    repo = Repo()
     if branch not in repo.branches:
         await message.err(f'{branch} :geçersiz parametre')
         return
-    out = ''
     try:
-        for i in repo.iter_commits(f'HEAD..{Config.UPSTREAM_REMOTE}/{branch}'):
-            out += (f"🔨 **#{i.count()}** : "
-                    f"[{i.summary}]({Config.UPSTREAM_REPO.rstrip('/')}/commit/{i}) "
-                    f"👷 __{i.author}__\n\n")
-    except GitCommandError as error:
-        await message.err(error, del_in=5)
+        out = _get_updates(repo, branch)
+    except GitCommandError as g_e:
+        await message.err(g_e, del_in=5)
         return
-    if out:
-        if pull_from_repo:
-            await message.edit(f'`[{branch}] İçin yeni güncelleme bulundu, Şimdi güncelleniyor ...`')
-            await asyncio.sleep(1)
-            repo.git.checkout(branch, force=True)
-            repo.git.reset('--hard', branch)
-            repo.git.pull(Config.UPSTREAM_REMOTE, branch, force=True)
+    if not (pull_from_repo or push_to_heroku):
+        if out:
+            change_log = f'**New UPDATE available for [{branch}]:\n\n📄 CHANGELOG 📄**\n\n'
+            await message.edit_or_send_as_file(change_log + out, disable_web_page_preview=True)
+        else:
+            await message.edit(f'**Userge is up-to-date with [{branch}]**', del_in=5)
+        return
+    if pull_from_repo:
+        if out:
+            await message.edit(f'`New update found for [{branch}], Now pulling...`')
+            await _pull_from_repo(repo, branch)
             await CHANNEL.log(f"**PULLED update from [{branch}]:\n\n📄 CHANGELOG 📄**\n\n{out}")
-        elif not push_to_heroku:
-            changelog_str = f'**[{branch}]: İçin yeni GÜNCELLEME mevcut \n\n📄 YENİLİKLER 📄**\n\n'
-            await message.edit_or_send_as_file(changelog_str + out, disable_web_page_preview=True)
-            return
-    elif not push_to_heroku:
-        if pull_from_repo:
+            if not push_to_heroku:
+                await message.edit('**Userge Successfully Updated!**\n'
+                                   '`Now restarting... Wait for a while!`', del_in=3)
+                asyncio.get_event_loop().create_task(userge.restart(True))
+        elif push_to_heroku:
+            await _pull_from_repo(repo, branch)
+        else:
             active = repo.active_branch.name
+            if active == branch:
+                await message.err(f"already in [{branch}]!")
+                return
             await message.edit(
                 f'`Moving HEAD from [{active}] >>> [{branch}] ...`', parse_mode='md')
-            await asyncio.sleep(1)
-            repo.git.checkout(branch, force=True)
-            repo.git.reset('--hard', branch)
+            await _pull_from_repo(repo, branch)
             await CHANNEL.log(f"`Moved HEAD from [{active}] >>> [{branch}] !`")
             await message.edit('`Now restarting... Wait for a while!`', del_in=3)
             asyncio.get_event_loop().create_task(userge.restart())
-        else:
-            await message.edit(f'**USERGE-X is up-to-date with [{branch}]**', del_in=5)
-        return
-    if not push_to_heroku:
-        await message.edit(
-            '**USERGE-X Successfully Updated!**\n'
-            '`Now restarting... Wait for a while!`', del_in=3)
-        asyncio.get_event_loop().create_task(userge.restart(True))
-        return
-    if not Config.HEROKU_APP:
-        await message.err("HEROKU APP : could not be found !")
-        return
-    sent = await message.edit(
+    if push_to_heroku:
+        await _push_to_heroku(message, repo, branch)
+
+
+def _get_updates(repo: Repo, branch: str) -> str:
+    repo.remote(Config.UPSTREAM_REMOTE).fetch(branch)
+    out = ''
+    upst = Config.UPSTREAM_REPO.rstrip('/')
+    for i in repo.iter_commits(f'HEAD..{Config.UPSTREAM_REMOTE}/{branch}'):
+        out += f"🔨 **#{i.count()}** : [{i.summary}]({upst}/commit/{i}) 👷 __{i.author}__\n\n"
+    return out
+
+
+async def _pull_from_repo(repo: Repo, branch: str) -> None:
+    repo.git.checkout(branch, force=True)
+    repo.git.reset('--hard', branch)
+    repo.git.pull(Config.UPSTREAM_REMOTE, branch, force=True)
+    await asyncio.sleep(1)
+
+
+async def _push_to_heroku(msg: Message, repo: Repo, branch: str) -> None:
+    sent = await msg.edit(
         f'`Now pushing updates from [{branch}] to heroku...\n'
         'this will take upto 5 min`\n\n'
         f'* **Restart** after 5 min using `{Config.CMD_TRIGGER}restart -h`\n\n'
         '* After restarted successfully, check updates again :)')
     try:
-        await _push_to_heroku(sent, branch)
+        await _heroku_helper(sent, repo, branch)
     except GitCommandError as g_e:
         LOG.exception(g_e)
         await sent.err(f"{g_e}, {Config.CMD_TRIGGER}restart -h and try again!")
@@ -113,12 +121,9 @@ async def check_update(message: Message):
 
 
 @pool.run_in_thread
-def _push_to_heroku(sent: Message, branch: str) -> None:
+def _heroku_helper(sent: Message, repo: Repo, branch: str) -> None:
     start_time = time()
     edited = False
-    repo = Repo()
-    if not "heroku" in repo.remotes:
-        remote = repo.create_remote("heroku", Config.HEROKU_GIT_URL)
 
     def progress(op_code, cur_count, max_count=None, message=''):
         nonlocal start_time, edited
@@ -136,12 +141,15 @@ def _push_to_heroku(sent: Message, branch: str) -> None:
                 loop.run_until_complete(sent.try_to_edit(f"{cur_msg}\n\n{prog}"))
             except TypeError:
                 pass
+    repo = Repo()
+    if not "heroku" in repo.remotes:
+        remote = repo.create_remote("heroku", Config.HEROKU_GIT_URL)
     cur_msg = sent.text.html
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        Repo().remote("heroku").push(refspec=f'{branch}:master',
-                                     progress=progress,
-                                     force=True)
+        repo.remote("heroku").push(refspec=f'{branch}:master',
+                                   progress=progress,
+                                   force=True)
     finally:
         loop.close()
