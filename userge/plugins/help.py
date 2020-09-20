@@ -43,7 +43,7 @@ _CATEGORY = {
     'Eğlence': '🎨',
     'misc': '🧩',
     'Araçlar': '🧰',
-    'Aletler': '🗂',
+    'Gereçler': '🗂',
     'unofficial': '➕',
     'temp': '♻️',
     'plugins': '💎',
@@ -57,9 +57,9 @@ BUTTON_BASE = get_collection("TEMP_BUTTON") # TODO use json cache
 REPO_X = InlineQueryResultArticle(
                     title="Repo",
                     input_message_content=InputTextMessageContent(
-                        "**USERGE-X'in nasıl kurulacağı burada açıklanmıştır** "),
+                        "**Here's how to setup USERGE-X** "),
                     url="https://github.com/code-rgb/USERGE-X",
-                    description="Kendin Kur",
+                    description="Setup Your Own",
                     thumb_url="https://i.imgur.com/1xsOo9o.png",
                     reply_markup=InlineKeyboardMarkup(
                         [[
@@ -67,9 +67,9 @@ REPO_X = InlineQueryResultArticle(
                             "🔥 USERGE-X Repo",
                             url="https://github.com/code-rgb/USERGE-X"),
                             InlineKeyboardButton(
-                            "🚀 USERGE-X'i Kurun",
+                            "🚀 Deploy USERGE-X",
                             url=("https://heroku.com/deploy?template="
-                            "https://github.com/hozansahin/USERGE-X/tree/alpha")
+                            "https://github.com/code-rgb/USERGE-X/tree/alpha")
                             )
                         ]]
                     )
@@ -89,11 +89,11 @@ async def _init() -> None:
         Config.USE_USER_FOR_CLIENT_CHECKS = bool(data['is_user'])
 
 
-@userge.on_cmd("help", about={'header': "USERGE komutlarını kullanma kılavuzu"}, allow_channels=False)
+@userge.on_cmd("help", about={'header': "Guide to use USERGE commands"}, allow_channels=False)
 async def helpme(message: Message) -> None:  # pylint: disable=missing-function-docstring
     plugins = userge.manager.enabled_plugins
     if not message.input_str:
-        out_str = f"""⚒ <b><u>(<code>{len(plugins)}</code>) Eklenti mevcut</u></b>\n\n"""
+        out_str = f"""⚒ <b><u>(<code>{len(plugins)}</code>) Plugin(s) Available</u></b>\n\n"""
         cat_plugins = userge.manager.get_all_plugins()
         for cat in sorted(cat_plugins):
             if cat == "plugins":
@@ -101,7 +101,7 @@ async def helpme(message: Message) -> None:  # pylint: disable=missing-function-
             out_str += (f"    {_CATEGORY.get(cat, '📁')} <b>{cat}</b> "
                         f"(<code>{len(cat_plugins[cat])}</code>) :   <code>"
                         + "</code>    <code>".join(sorted(cat_plugins[cat])) + "</code>\n\n")
-        out_str += f"""📕 <b>Kullanım:</b>  <code>{Config.CMD_TRIGGER}help [plugin_name]</code>"""
+        out_str += f"""📕 <b>Usage:</b>  <code>{Config.CMD_TRIGGER}help [plugin_name]</code>"""
     else:
         key = message.input_str
         if (not key.startswith(Config.CMD_TRIGGER)
@@ -109,14 +109,14 @@ async def helpme(message: Message) -> None:  # pylint: disable=missing-function-
                 and (len(plugins[key].enabled_commands) > 1
                      or plugins[key].enabled_commands[0].name.lstrip(Config.CMD_TRIGGER) != key)):
             commands = plugins[key].enabled_commands
-            out_str = f"""<b><u>(<code>{len(commands)}</code>) Komut (lar) kullanılabilir</u></b>
+            out_str = f"""<b><u>(<code>{len(commands)}</code>) Command(s) Available</u></b>
 
-🔧 <b>Eklenti:</b>  <code>{key}</code>
-📘 <b>Döküman:</b>  <code>{plugins[key].doc}</code>\n\n"""
+🔧 <b>Plugin:</b>  <code>{key}</code>
+📘 <b>Doc:</b>  <code>{plugins[key].doc}</code>\n\n"""
             for i, cmd in enumerate(commands, start=1):
                 out_str += (f"    🤖 <b>cmd(<code>{i}</code>):</b>  <code>{cmd.name}</code>\n"
-                            f"    📚 <b>Bilgi:</b>  <i>{cmd.doc}</i>\n\n")
-            out_str += f"""📕 <b>Kullanım:</b>  <code>{Config.CMD_TRIGGER}help [command_name]</code>"""
+                            f"    📚 <b>info:</b>  <i>{cmd.doc}</i>\n\n")
+            out_str += f"""📕 <b>Usage:</b>  <code>{Config.CMD_TRIGGER}help [command_name]</code>"""
         else:
             commands = userge.manager.enabled_commands
             key = key.lstrip(Config.CMD_TRIGGER)
@@ -126,7 +126,7 @@ async def helpme(message: Message) -> None:  # pylint: disable=missing-function-
             elif key_ in commands:
                 out_str = f"<code>{key_}</code>\n\n{commands[key_].about}"
             else:
-                out_str = f" <code>{message.input_str}</code> : <i>Modül veya komut bulunamadı</i>"
+                out_str = f"<i>No Module or Command Found for</i>: <code>{message.input_str}</code>"
     await message.edit(out_str, del_in=0, parse_mode='html', disable_web_page_preview=True)
 
 if Config.BOT_TOKEN and Config.OWNER_ID:
@@ -141,14 +141,14 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 try:
                     await func(c_q)
                 except MessageNotModified:
-                    await c_q.answer("Yenilenecek Hiçbir Şey Bulunamadı 🤷‍♂️", show_alert=True)
+                    await c_q.answer("Nothing Found to Refresh 🤷‍♂️", show_alert=True)
                 except MessageIdInvalid:
-                    await c_q.answer("Üzgünüm, bunu düzenleme iznim yok😔",
+                    await c_q.answer("Sorry, I Don't Have Permissions to edit this 😔",
                                      show_alert=True)
             else:
                 user_dict = await ubot.get_user_dict(Config.OWNER_ID)
                 await c_q.answer(
-                    f"Yanlızca {user_dict['flname']} Buna erişebilir ...! Kendi USERGE-X botunuzu kurun.",
+                    f"Only {user_dict['flname']} Can Access this...! Build Your USERGE-X",
                     show_alert=True)
         return wrapper
 
@@ -179,10 +179,10 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         cur_pos = str(callback_query.matches[0].group(1))
         pos_list = cur_pos.split('|')
         if len(pos_list) == 1:
-            await callback_query.answer("ana menüdesiniz", show_alert=True)
+            await callback_query.answer("you are in main menu", show_alert=True)
             return
         if len(pos_list) == 2:
-            text = "🔥𝐔𝐒𝐄𝐑𝐆𝐄-𝐗 ANA MENÜ 🔥"
+            text = " 𝐔𝐒𝐄𝐑𝐆𝐄-𝐗  𝗠𝗔𝗜𝗡 𝗠𝗘𝗡𝗨"
             buttons = main_menu_buttons()
         elif len(pos_list) == 3:
             text, buttons = category_data(cur_pos)
@@ -229,7 +229,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
     @check_owner
     async def callback_mm(callback_query: CallbackQuery):
         await callback_query.edit_message_text(
-            " 🔥𝐔𝐒𝐄𝐑𝐆𝐄-𝐗 ANA MENÜ 🔥", reply_markup=InlineKeyboardMarkup(main_menu_buttons()))
+            " 𝐔𝐒𝐄𝐑𝐆𝐄-𝐗  𝗠𝗔𝗜𝗡 𝗠𝗘𝗡𝗨 ", reply_markup=InlineKeyboardMarkup(main_menu_buttons()))
 
     @ubot.on_callback_query(filters.regex(pattern=r"^chgclnt$"))
     @check_owner
@@ -276,9 +276,9 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             pairs = pairs[current_page*rows:(current_page + 1)*rows] + [
                 [
                     InlineKeyboardButton(
-                        "⏪ Önceki", callback_data=f"({cur_pos})prev({current_page})".encode()),
+                        "⏪ Previous", callback_data=f"({cur_pos})prev({current_page})".encode()),
                     InlineKeyboardButton(
-                        "⏩ Sonraki", callback_data=f"({cur_pos})next({current_page})".encode())],
+                        "⏩ Next", callback_data=f"({cur_pos})next({current_page})".encode())],
             ]
         pairs += default_buttons(cur_pos)
         return pairs
@@ -292,23 +292,23 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         tmp_btns = []
         if cur_pos != "mm":
             tmp_btns.append(InlineKeyboardButton(
-                "⬅ Geri", callback_data=f"back({cur_pos})".encode()))
+                "⬅ Back", callback_data=f"back({cur_pos})".encode()))
             if len(cur_pos.split('|')) > 2:
                 tmp_btns.append(InlineKeyboardButton(
-                    "🖥 Ana Menü", callback_data="mm".encode()))
+                    "🖥 Main Menu", callback_data="mm".encode()))
                 tmp_btns.append(InlineKeyboardButton(
-                    "🔄 Yenile", callback_data=f"refresh({cur_pos})".encode()))
+                    "🔄 Refresh", callback_data=f"refresh({cur_pos})".encode()))
         else:
-            cur_clnt = "👤 Kullanıcı" if Config.USE_USER_FOR_CLIENT_CHECKS else "⚙️ BOT"
+            cur_clnt = "👤 USER" if Config.USE_USER_FOR_CLIENT_CHECKS else "⚙️ BOT"
             tmp_btns.append(InlineKeyboardButton(
-                f"🔩 Kim menüyü açabilir : {cur_clnt}", callback_data="chgclnt".encode()))
+                f"🔩 Client for Checks and Sudos : {cur_clnt}", callback_data="chgclnt".encode()))
         return [tmp_btns]
 
     def category_data(cur_pos: str):
         pos_list = cur_pos.split('|')
         plugins = userge.manager.get_all_plugins()[pos_list[1]]
-        text = (f"`{_CATEGORY.get(pos_list[1], '📁')} {pos_list[1]}`  Kategorisi**"
-        f"**(`{len(plugins)}`) : Altındaki Eklenti(ler) ")
+        text = (f"**(`{len(plugins)}`) Plugin(s) Under : "
+                f"`{_CATEGORY.get(pos_list[1], '📁')} {pos_list[1]}`  Category**")
         buttons = parse_buttons(0, '|'.join(pos_list[:2]),
                                 lambda x: f"🔹 {x}",
                                 plugins)
@@ -317,29 +317,29 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
     def plugin_data(cur_pos: str, p_num: int = 0):
         pos_list = cur_pos.split('|')
         plg = userge.manager.plugins[pos_list[2]]
-        text = f"""🔹 **--Eklenti Detayları--** 🔹
+        text = f"""🔹 **--Plugin Status--** 🔹
 
-🎭 **Kategori** : `{pos_list[1]}`
-🔖 **İsim** : `{plg.name}`
-📝 **Bilgi** : `{plg.doc}`
-◾️ **Komutlar** : `{len(plg.commands)}`
-⚖ **Filtreler** : `{len(plg.filters)}`
-✅ **Yüklü mü?** : `{plg.is_loaded}`
-➕ **Etkin mi?** : `{plg.is_enabled}`
+🎭 **Category** : `{pos_list[1]}`
+🔖 **Name** : `{plg.name}`
+📝 **Doc** : `{plg.doc}`
+◾️ **Commands** : `{len(plg.commands)}`
+⚖ **Filters** : `{len(plg.filters)}`
+✅ **Loaded** : `{plg.is_loaded}`
+➕ **Enabled** : `{plg.is_enabled}`
 """
         tmp_btns = []
         if plg.is_loaded:
             tmp_btns.append(InlineKeyboardButton(
-                "❎ Kaldır", callback_data=f"unload({'|'.join(pos_list[:3])})".encode()))
+                "❎ Unload", callback_data=f"unload({'|'.join(pos_list[:3])})".encode()))
         else:
             tmp_btns.append(InlineKeyboardButton(
-                "✅ Yükle", callback_data=f"load({'|'.join(pos_list[:3])})".encode()))
+                "✅ Load", callback_data=f"load({'|'.join(pos_list[:3])})".encode()))
         if plg.is_enabled:
             tmp_btns.append(InlineKeyboardButton(
-                "➖ Devre dışı", callback_data=f"disable({'|'.join(pos_list[:3])})".encode()))
+                "➖ Disable", callback_data=f"disable({'|'.join(pos_list[:3])})".encode()))
         else:
             tmp_btns.append(InlineKeyboardButton(
-                "➕ Etkinleştir", callback_data=f"enable({'|'.join(pos_list[:3])})".encode()))
+                "➕ Enable", callback_data=f"enable({'|'.join(pos_list[:3])})".encode()))
         buttons = parse_buttons(p_num, '|'.join(pos_list[:3]),
                                 lambda x: f"⚖ {x}" if is_filter(x) else f" {x}",
                                 (flt.name for flt in plg.commands + plg.filters))
@@ -352,34 +352,34 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         flts = {flt.name: flt for flt in plg.commands + plg.filters}
         flt = flts[pos_list[-1]]
         flt_data = f"""
-🔖 **İsim** : `{flt.name}`
-📝 **Bilgi** : `{flt.doc}`
-🤖 **Bot ile kullanım** : `{flt.allow_via_bot}`
-✅ **Yüklü mü?** : `{flt.is_loaded}`
-➕ **Etkin mi?** : `{flt.is_enabled}`"""
+🔖 **Name** : `{flt.name}`
+📝 **Doc** : `{flt.doc}`
+🤖 **Via Bot** : `{flt.allow_via_bot}`
+✅ **Loaded** : `{flt.is_loaded}`
+➕ **Enabled** : `{flt.is_enabled}`"""
         if hasattr(flt, 'about'):
-            text = f"""**--Komut Detayları--**
+            text = f"""**--Command Status--**
 {flt_data}
 {flt.about}
 """
         else:
-            text = f"""⚖ **--Filtre Detayları--** ⚖
+            text = f"""⚖ **--Filter Status--** ⚖
 {flt_data}
 """
         buttons = default_buttons(cur_pos)
         tmp_btns = []
         if flt.is_loaded:
             tmp_btns.append(InlineKeyboardButton(
-                "❎ Kaldır", callback_data=f"unload({cur_pos})".encode()))
+                "❎ Unload", callback_data=f"unload({cur_pos})".encode()))
         else:
             tmp_btns.append(InlineKeyboardButton(
-                "✅ Yükle", callback_data=f"load({cur_pos})".encode()))
+                "✅ Load", callback_data=f"load({cur_pos})".encode()))
         if flt.is_enabled:
             tmp_btns.append(InlineKeyboardButton(
-                "➖ Devre dışı", callback_data=f"disable({cur_pos})".encode()))
+                "➖ Disable", callback_data=f"disable({cur_pos})".encode()))
         else:
             tmp_btns.append(InlineKeyboardButton(
-                "➕ Etkinleşir", callback_data=f"enable({cur_pos})".encode()))
+                "➕ Enable", callback_data=f"enable({cur_pos})".encode()))
         buttons = [tmp_btns] + buttons
         return text, buttons
 
@@ -420,14 +420,14 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             if string == "syntax":
                 owner = [[
                         InlineKeyboardButton(
-                        text="İletişim", 
-                        url="https://t.me/hozansahin"
+                        text="Contact", 
+                        url="https://t.me/deleteduser420"
                         )
                 ]]
                 results.append(
                         InlineQueryResultPhoto(
                             photo_url="https://coverfiles.alphacoders.com/123/123388.png",
-                            caption="Ben yaptım **Hozan Şahin**",
+                            caption="Hey I solved **𝚂𝚢𝚗𝚝𝚊𝚡's ░ Σrr♢r**",
                             reply_markup=InlineKeyboardMarkup(owner)
                         )
                 )
@@ -441,18 +441,18 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 ]]                           
                 results.append(
                         InlineQueryResultArticle(
-                            title="Rick Roll değil",
+                            title="Not a Rick Roll",
                             input_message_content=InputTextMessageContent(
-                                "🔍 Arama Sonuçları"
+                                "Search Results"
                             ),
-                            description="Kesinlikle Rick Roll Değil",
+                            description="Definately Not a Rick Roll",
                             thumb_url="https://i.imgur.com/hRCaKAy.png",
                             reply_markup=InlineKeyboardMarkup(rick)
                         )
                 )
 
             if string == "alive":
-                buttons = [[InlineKeyboardButton("🔧 AYARLAR", callback_data="settings_btn"),
+                buttons = [[InlineKeyboardButton("🔧 SETTINGS", callback_data="settings_btn"),
                             InlineKeyboardButton(text="⚡️ REPO", url=Config.UPSTREAM_REPO)]]
 
                 alive_info = f"""
@@ -514,9 +514,9 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                         InlineQueryResultArticle(
                             title="GApps",
                             input_message_content=InputTextMessageContent(
-                                "[\u200c](https://i.imgur.com/BZBMrfn.jpg) **En Güncel Android 10 arm64 GApps**" 
+                                "[\u200c](https://i.imgur.com/BZBMrfn.jpg) **LATEST Android 10 arm64 GApps**" 
                             ),
-                            description="En güncel GApps indirme bağlantılarını doğrudan SF'DEN indirin",
+                            description="Get Latest GApps Download Links Directly from SF",
                             thumb_url="https://i.imgur.com/Npzw8Ph.png",
                             reply_markup=InlineKeyboardMarkup(buttons)
                         )
