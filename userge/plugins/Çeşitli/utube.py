@@ -1,4 +1,4 @@
-""" work with youtube """
+""" youtube üzerinde çalışır """
 
 # Copyright (C) 2020 by UsergeTeam@Github, < https://github.com/UsergeTeam >.
 #
@@ -25,22 +25,22 @@ from .upload import upload
 LOGGER = userge.getLogger(__name__)
 
 
-@userge.on_cmd("ytinfo", about={'header': "Get info from ytdl",
-                                'description': 'Get information of the link without downloading',
+@userge.on_cmd("ytinfo", about={'header': "Ytdl ile  bilgileri görüntüleyin",
+                                'description': 'İndirmeden bağlantı bilgilerini görüntüleyin',
                                 'examples': '{tr}ytinfo link',
-                                'others': 'To get info about direct links, use `{tr}head link`'})
+                                'others': 'Doğrudan bağlantılar üzerinden bilgi almak için şunu kullanın: `{tr}head link`'})
 async def ytinfo(message: Message):
-    """ get info from a link """
-    await message.edit("Hold on \u23f3 ..")
+    """ bir bağlantıdan bilgi alın """
+    await message.edit("Lütfen Bekleyin \u23f3 ..")
     _exracted = await _yt_getInfo(message.input_or_reply_str)
     if isinstance(_exracted, ytdl.utils.YoutubeDLError):
         await message.err(str(_exracted))
         return
     out = """
-**Title** >>
+**Başlık** >>
 __{title}__
 
-**Uploader** >>
+**Yükleyen** >>
 __{uploader}__
 
 {table}
@@ -67,32 +67,33 @@ __{uploader}__
 async def ytDown(message: Message):
     """ download from a link """
     def __progress(data: dict):
-        if ((time() - startTime) % 4) > 3.9:
-            if data['status'] == "downloading":
-                eta = data.get('eta')
-                speed = data.get('speed')
-                if not (eta and speed):
-                    return
-                out = "**Speed** >> {}/s\n**ETA** >> {}\n".format(
-                    humanbytes(speed), time_formatter(eta))
-                out += f'**File Name** >> `{data["filename"]}`\n\n'
-                current = data.get('downloaded_bytes')
-                total = data.get("total_bytes")
-                if current and total:
-                    percentage = int(current) * 100 / int(total)
-                    out += f"Progress >> {int(percentage)}%\n"
-                    out += "[{}{}]".format(
-                        ''.join((Config.FINISHED_PROGRESS_STR
-                                 for _ in range(floor(percentage / 5)))),
-                        ''.join((Config.UNFINISHED_PROGRESS_STR
-                                 for _ in range(20 - floor(percentage / 5)))))
-                if message.text != out:
-                    try:
-                        asyncio.get_event_loop().run_until_complete(message.edit(out))
-                    except TypeError:
-                        pass
+        if (time() - startTime) % 4 <= 3.9:
+            return
+        if data['status'] == "downloading":
+            eta = data.get('eta')
+            speed = data.get('speed')
+            if not (eta and speed):
+                return
+            out = "**Speed** >> {}/s\n**ETA** >> {}\n".format(
+                humanbytes(speed), time_formatter(eta))
+            out += f'**File Name** >> `{data["filename"]}`\n\n'
+            current = data.get('downloaded_bytes')
+            total = data.get("total_bytes")
+            if current and total:
+                percentage = int(current) * 100 / int(total)
+                out += f"Progress >> {int(percentage)}%\n"
+                out += "[{}{}]".format(
+                    ''.join((Config.FINISHED_PROGRESS_STR
+                             for _ in range(floor(percentage / 5)))),
+                    ''.join((Config.UNFINISHED_PROGRESS_STR
+                             for _ in range(20 - floor(percentage / 5)))))
+            if message.text != out:
+                try:
+                    asyncio.get_event_loop().run_until_complete(message.edit(out))
+                except TypeError:
+                    pass
 
-    await message.edit("Hold on \u23f3 ..")
+    await message.edit("Lütfen Bekleyin \u23f3 ..")
     startTime = time()
     if bool(message.flags):
         desiredFormat1 = str(message.flags.get('a', ''))
@@ -138,7 +139,7 @@ async def ytDown(message: Message):
                                'examples': '{tr}ytdes link'})
 async def ytdes(message: Message):
     """ get description from a link """
-    await message.edit("Hold on \u23f3 ..")
+    await message.edit("Lütfen Bekleyin \u23f3 ..")
     description = await _yt_description(message.input_or_reply_str)
     if isinstance(description, ytdl.utils.YoutubeDLError):
         await message.err(str(description))
@@ -187,11 +188,8 @@ def _yt_getInfo(link):
 @pool.run_in_thread
 def _supported(url):
     ies = ytdl.extractor.gen_extractors()
-    for ie in ies:
-        if ie.suitable(url) and ie.IE_NAME != 'generic':
             # Site has dedicated extractor
-            return True
-    return False
+    return any(ie.suitable(url) and ie.IE_NAME != 'generic' for ie in ies)
 
 
 @pool.run_in_thread
