@@ -26,7 +26,7 @@ _LOG_STR = "<<<!  :::::  %s  :::::  !>>>"
 
 
 def _gen_string(name: str) -> str:
-    return "**Log Kaydı** : #" + name.split('.')[-1].upper() + "\n\n{}"
+    return "**logger** : #" + name.split('.')[-1].upper() + "\n\n{}"
 
 
 class ChannelLogger:
@@ -47,7 +47,7 @@ class ChannelLogger:
         Returns:
             str
         """
-        return "<b><a href='https://t.me/c/{}/{}'>Görüntüle</a></b>".format(
+        return "<b><a href='https://t.me/c/{}/{}'>Preview</a></b>".format(
             str(Config.LOG_CHANNEL_ID)[4:], message_id)
 
     def bind(self, client: Union['_client.Userge', '_client._UsergeBot']) -> None:

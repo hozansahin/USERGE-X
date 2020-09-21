@@ -25,12 +25,13 @@ import os
 import requests
 from html_telegraph_poster import TelegraphPoster
 import re
+import urllib
 from userge.plugins.fun.stylish import font_gen
-from pymediainfo import MediaInfo
-
 
 MEDIA_TYPE, MEDIA_URL = None, None
 
+
+FONT_NAMES = ['serif', 'sans', 'sans_i', 'serif_i', 'medi_b', 'medi', 'double', 'cursive_b', 'cursive', 'bigsmall', 'reverse', 'circle', 'circle_b', 'mono', 'square_b', 'square', 'smoth', 'goth', 'wierd_a', 'x', 'cross', 'wierd_b', 'slash', 'uline', 'doubleuline', 'wide', 'web', 'weeb', 'weeeb']
 
 
 PATH = "userge/xcache"
@@ -39,20 +40,21 @@ if not os.path.exists(PATH):
     os.mkdir(PATH)
 
 _CATEGORY = {
-    'Yönetim': '🙋🏻‍♂️',
-    'Eğlence': '🎨',
+    'admin': '🙋🏻‍♂️',
+    'fun': '🎨',
     'misc': '🧩',
-    'Araçlar': '🧰',
-    'Gereçler': '🗂',
+    'tools': '🧰',
+    'utils': '🗂',
     'unofficial': '➕',
     'temp': '♻️',
     'plugins': '💎',
-    'bot' : '💠' 
+    'bot' : '🔰' 
 }
 # Database
 SAVED_SETTINGS = get_collection("CONFIGS")
 
 BUTTON_BASE = get_collection("TEMP_BUTTON") # TODO use json cache
+
 
 REPO_X = InlineQueryResultArticle(
                     title="Repo",
@@ -75,12 +77,15 @@ REPO_X = InlineQueryResultArticle(
                     )
             )
 
+ 
+
 
 # Thanks boi @FLAMEPOSEIDON
 ALIVE_IMGS = ["https://telegra.ph/file/11123ef7dff2f1e19e79d.jpg", "https://i.imgur.com/uzKdTXG.jpg",
 "https://telegra.ph/file/6ecab390e4974c74c3764.png",
 "https://telegra.ph/file/995c75983a6c0e4499b55.png",
 "https://telegra.ph/file/86cc25c78ad667ca5e691.png"]
+
 
 
 async def _init() -> None:
@@ -391,20 +396,22 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
             imgur = r"^http[s]?://i\.imgur\.com/(\w+)\.(gif|jpg|png)$"
             match = re.search(imgur, media_link)
             if not match:
-                telegraph = r"^http[s]?://telegra\.ph/file/(\w+)\.(jpg|png)$"
+                telegraph = r"http[s]?://telegra\.ph/file/(\w+)\.(jpg|png)"
                 match = re.search(telegraph, media_link)
             if match:
                 media_type = match.group(2)
                 link = match.group(0)
                 limit = 1 if media_type == 'gif' else 5
-                media_info = MediaInfo.parse(media_link)
-                for track in media_info.tracks:
-                    if track.track_type == 'General':
-                        media_size = (track.file_size / 1000000)
-                if media_size < limit:
-                    MEDIA_TYPE = media_type
-                    MEDIA_URL = media_link
+                req = urllib.request.Request(link, method='HEAD')
+                f = urllib.request.urlopen(req)
+                if f.status == 200:
+                    size = '{:.2f}'.format(int(f.headers['Content-Length']) / float(1 << 20))
+                    if float(size) < limit:
+                        MEDIA_TYPE = media_type
+                        MEDIA_URL = media_link
         
+            
+            
 
     @ubot.on_inline_query()
     async def inline_answer(_, inline_query: InlineQuery):
@@ -415,7 +422,19 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
         str_y = i_q.split(" ", 1) # trigger and Text
         string_split = string.split() # All lower and Split each word
 
-        if inline_query.from_user.id == Config.OWNER_ID or inline_query.from_user.id in Config.SUDO_USERS:
+        if inline_query.from_user and inline_query.from_user.id == Config.OWNER_ID or inline_query.from_user.id in Config.SUDO_USERS:
+            MAIN_MENU = InlineQueryResultArticle(
+                        
+                        title="Main Menu",
+                        input_message_content=InputTextMessageContent(
+                            " 𝐔𝐒𝐄𝐑𝐆𝐄-𝐗  𝗠𝗔𝗜𝗡 𝗠𝗘𝗡𝗨 "
+                        ),
+                        url="https://github.com/code-rgb/USERGE-X",
+                        description="Userge-X Main Menu",
+                        thumb_url="https://i.imgur.com/1xsOo9o.png",
+                        reply_markup=InlineKeyboardMarkup(main_menu_buttons())
+                    )           
+            results.append(MAIN_MENU)             
         
             if string == "syntax":
                 owner = [[
@@ -456,7 +475,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                             InlineKeyboardButton(text="⚡️ REPO", url=Config.UPSTREAM_REPO)]]
 
                 alive_info = f"""
-    **[USERGE-X](https://telegram.dog/x_xtests) is Up and Running**
+    **[USERGE-X](https://github.com/code-rgb/USERGE-X) is Up and Running**
 
  • 🐍 Python :  `v{versions.__python_version__}`
  • 🔥 Pyrogram :  `v{versions.__pyro_version__}`
@@ -573,7 +592,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 results.append(REPO_X)
 
             if str_x[0].lower() == "op" and len(str_x) > 1:        
-                txt = i_q[3:]         
+                txt = i_q[3:]          # TODO change it
 
                 opinion = os.path.join(PATH, "emoji_data.txt")
                 try:
@@ -596,9 +615,10 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 ]]                           
                 results.append(
                         InlineQueryResultArticle(
+                            
                             title="Ask For Opinion",
                             input_message_content=InputTextMessageContent(txt),
-                            description=f"Q. {txt}",
+                            description="e.g @yourbot op Are Cats Cute?",
                             thumb_url="https://i.imgur.com/Zlc98qS.jpg",
                             reply_markup=InlineKeyboardMarkup(buttons)
                         )
@@ -633,11 +653,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                 if len(str_y) == 2:
                     results = []
                     input_text = str_y[1]
-                    font_names = ['serif', 'sans', 'sans_i', 'serif_i', 'medi_b', 'medi',
-                                'double', 'cursive_b', 'cursive', 'bigsmall', 'reverse', 'circle',
-                                'circle_b', 'mono', 'square_b', 'square', 'smoth', 'goth', 'wide',
-                                'web', 'weeb', 'weeeb']
-                    for f_name in font_names:
+                    for f_name in FONT_NAMES:
                         styled_str = await font_gen(f_name, input_text)
                         results.append(
                                     InlineQueryResultArticle(
@@ -650,8 +666,8 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                     await inline_query.answer(
                         results=results,
                         cache_time=1,
-                        switch_pm_text="Available Commands",
-                        switch_pm_parameter="inline"
+                        switch_pm_text="🖋 Sylish FONTS",
+                        switch_pm_parameter="start"
                     )
                     return
 
@@ -680,40 +696,36 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                         d = {str(inline_query.id) : {'user_id': user_id, 'msg': msg}}
                         json.dump(d, open(secret,'w'))
                     
-                    buttons = [[InlineKeyboardButton("🔐  SHOW", callback_data=f"secret_{inline_query.id}")]]
+                    buttons = [[InlineKeyboardButton("🔐 REVEAL", callback_data=f"secret_{inline_query.id}")]]
                     results.append(
                                 InlineQueryResultArticle(
                                     title="Send A Secret Message",
-                                    input_message_content=InputTextMessageContent(f"📩 <b>Secret Msg</b> for {user_name}. Only he/she can open it."),
+                                    input_message_content=InputTextMessageContent(f"📩 <b>TOPSECRET!</b> for {user_name}. Only he/she can open it."),
                                     description=f"Send Secret Message to: {user_name}",
                                     thumb_url="https://i.imgur.com/c5pZebC.png",
                                     reply_markup=InlineKeyboardMarkup(buttons)
                                 )
                     )
-            MAIN_MENU = InlineQueryResultArticle(
-                        title="Main Menu",
-                        input_message_content=InputTextMessageContent(" 𝐔𝐒𝐄𝐑𝐆𝐄-𝐗  𝗠𝗔𝗜𝗡 𝗠𝗘𝗡𝗨 "),
-                        url="https://github.com/code-rgb/USERGE-X",
-                        description="Userge-X Main Menu",
-                        thumb_url="https://i.imgur.com/1xsOo9o.png",
-                        reply_markup=InlineKeyboardMarkup(main_menu_buttons())
-                    )           
-            results.append(MAIN_MENU) 
-            if len(results) != 0:
-                await inline_query.answer(
-                    results=results, 
-                    cache_time=1,
-                    switch_pm_text="Available Commands",
-                    switch_pm_parameter="inline"
-                )
-        else:
-            results.append(REPO_X)
-            owner_name = (await userge.get_me()).first_name
-            await inline_query.answer(
-                        results=results, 
+                else:
+                    results = [(
+                                InlineQueryResultArticle(
+                                    title="Send A Secret Message",
+                                    input_message_content=InputTextMessageContent("Do `.secret` for more info"),
+                                    description="secret @username message ..."
+                                )
+                    )]
+                    await inline_query.answer(
+                        results=results,
                         cache_time=1,
-                        switch_pm_text=f"This bot is only for {owner_name}",
+                        switch_pm_text="🔒 SECRETS",
                         switch_pm_parameter="start"
                     )
-
+                    return
+        else:
+            results.append(REPO_X)
+        try:
+            if len(results) != 0:
+                await inline_query.answer(results=results, cache_time=1)
+        except MessageEmpty:
+            return
         

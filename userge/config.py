@@ -22,7 +22,7 @@ from . import versions
 
 _REPO = Repo()
 _LOG = logging.getLogger(__name__)
-logbot.reply_last_msg("Yapılandırma Ayarlanıyor ...")
+logbot.reply_last_msg("Setting Configs ...")
 
 
 class Config:

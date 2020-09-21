@@ -26,7 +26,7 @@ async def progress(current: int,
                    ud_type: str,
                    file_name: str = '',
                    delay: int = userge.Config.EDIT_SLEEP_TIMEOUT) -> None:
-    """ ilerleme fonksiyonu """
+    """ progress function """
     if message.process_is_canceled:
         await message.client.stop_transmission()
     task_id = f"{message.chat.id}.{message.message_id}"
@@ -35,7 +35,7 @@ async def progress(current: int,
             return
         del _TASKS[task_id]
         try:
-            await message.try_to_edit("`işlem tamamlanıyor ...`")
+            await message.try_to_edit("`finalizing process ...`")
         except FloodWait as f_e:
             time.sleep(f_e.x)
         return
@@ -52,11 +52,11 @@ async def progress(current: int,
         progress_str = \
             "__{}__ : `{}`\n" + \
             "```[{}{}]```\n" + \
-            "**İlerleme** : `{}%`\n" + \
-            "**Tamamlanan** : `{}`\n" + \
-            "**Toplam** : `{}`\n" + \
-            "**Hız** : `{}/s`\n" + \
-            "**Tahmini Bitiş** : `{}`"
+            "**Progress** : `{}%`\n" + \
+            "**Completed** : `{}`\n" + \
+            "**Total** : `{}`\n" + \
+            "**Speed** : `{}/s`\n" + \
+            "**ETA** : `{}`"
         progress_str = progress_str.format(
             ud_type,
             file_name,

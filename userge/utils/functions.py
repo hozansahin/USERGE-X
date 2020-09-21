@@ -11,45 +11,45 @@ import html
 async def media_to_image(message):
     replied = message.reply_to_message
     if not (replied.photo or replied.sticker or replied.animation or replied.video):
-        await message.err("<code>Medya Türü Geçersiz! YARDIM'a bakın.</code>")
+        await message.err("`Media Type Is Invalid ! See HELP.`")
         return
     if not os.path.isdir(Config.DOWN_PATH):
         os.makedirs(Config.DOWN_PATH)
-    await message.edit("Kahretsin, Yine Başlıyoruz...")
+    await message.edit("`Ah Shit, Here We Go Again ...`")
     dls = await message.client.download_media(
         message=message.reply_to_message,
         file_name=Config.DOWN_PATH,
         progress=progress,
-        progress_args=(message, "Verilen içeriğe sahip olmaya çalışıyorum")
+        progress_args=(message, "`Trying to Posses given content`")
     )
     dls_loc = os.path.join(Config.DOWN_PATH, os.path.basename(dls))
     if replied.sticker and replied.sticker.file_name.endswith(".tgs"):
-        await message.edit("Animasyonlu Stikır Görüntüye Dönüştürülüyor ...")
+        await message.edit("Converting Animated Sticker To Image...")
         png_file = os.path.join(Config.DOWN_PATH, "image.png")
         cmd = f"lottie_convert.py --frame 0 -if lottie -of png {dls_loc} {png_file}"
         stdout, stderr = (await runcmd(cmd))[:2]
         os.remove(dls_loc)
         if not os.path.lexists(png_file):
-            await message.err("Bu çıkartma Gey, Görev Başarıyla Başarısız Oldu ≧ω≦")
+            await message.err("This sticker is Gey, Task Failed Successfully ≧ω≦")
             raise Exception(stdout + stderr)
         dls_loc = png_file
     elif replied.sticker and replied.sticker.file_name.endswith(".webp"):
         stkr_file = os.path.join(Config.DOWN_PATH, "stkr.png")
         os.rename(dls_loc, stkr_file)
         if not os.path.lexists(stkr_file):
-            await message.err("```Çok Aradık Ama Sticker bulunamadı...```")
+            await message.err("```Sticker not found...```")
             return
         dls_loc = stkr_file
     elif replied.animation or replied.video:
-        await message.edit("Medya Görüntüye Dönüştürülüyor...")
+        await message.edit("`Converting Media To Image ...`")
         jpg_file = os.path.join(Config.DOWN_PATH, "image.jpg")
         await take_screen_shot(dls_loc, 0, jpg_file)
         os.remove(dls_loc)
         if not os.path.lexists(jpg_file):
-            await message.err("Bu Gif Gey'dir (｡ì _ í｡), Görev Başarıyla Başarısız Oldu!")
+            await message.err("This Gif is Gey (｡ì _ í｡), Task Failed Successfully !")
             return
         dls_loc = jpg_file
-    await message.edit("Neredeyse bitti...😎")
+    await message.edit("`Almost Done ...`")
     return dls_loc
 
 

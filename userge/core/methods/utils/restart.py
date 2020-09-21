@@ -34,7 +34,7 @@ class Restart(RawClient):  # pylint: disable=missing-class-docstring
         except Exception as c_e:  # pylint: disable=broad-except
             _LOG.error(_LOG_STR, c_e)
         if update_req:
-            _LOG.info(_LOG_STR, "Gerekli Bağımlılıklar Yükleniyor ...")
+            _LOG.info(_LOG_STR, "Installing Requirements...")
             os.system("pip3 install -U pip && pip3 install -r requirements.txt")  # nosec
         os.execl(sys.executable, sys.executable, '-m', 'userge')  # nosec
         sys.exit()

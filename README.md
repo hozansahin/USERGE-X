@@ -1,7 +1,6 @@
-<h2 align="center"><b>Yapımcı: <a href="https://telegram.dog/deleteduser420">𝚂𝚢𝚗𝚝𝚊𝚡 ░ Σrr♢r</a></b></h2>
+<h2 align="center"><b>Owner: <a href="https://telegram.dog/deleteduser420">𝚂𝚢𝚗𝚝𝚊𝚡 ░ Σrr♢r</a></b></h2>
 <br>
-<h2 align="center"><b>Çeviri: <a href="https://telegram.dog/hozansahin">Hozan Şahin</a></b></h2>
-<br>
+
 <p align="center">
     <a href="https://github.com/code-rgb/USERGE-X"><img src="https://i.imgur.com/53mdl2v.png" alt="Userge-x" width=400px></a>
     <br>
@@ -9,7 +8,7 @@
 </p>
 
 <h1>USERGE-X</h1>
-<b>Kullanıcı dostu Telegram UserBot'u</b>
+<b>Pluggable Telegram UserBot</b>
 <br>
 <br>
 
@@ -24,68 +23,79 @@
 
 <br>
 
- **USERGE-X** _Python_ [Pyrogram](https://github.com/pyrogram/pyrogram) kullanılarak yazılmış Güçlü, _Kullanıcı Dostu_ Telegram UserBot (Kullanıcı) Botudur.
+ **USERGE-X** is a Powerful , _Pluggable_ Telegram UserBot written in _Python_ using [Pyrogram](https://github.com/pyrogram/pyrogram).
 <br>
 
 <br>
 
-## Nasıl kullanılır ??
+## How to Use ??
 
-* [Heroku Ayarları](https://telegra.ph/Heroku-Vars-for-USERGE-X-08-25)
-* Bakınız [Heroku Kullanum Kılavuzu](https://github.com/code-rgb/USERGE-X#how-to-deploy)
+* [Heroku Vars](https://telegra.ph/Heroku-Vars-for-USERGE-X-08-25)
+* See [Deploy Guide](https://github.com/code-rgb/USERGE-X#how-to-deploy)
 
 
-## feragatname
+## Disclaimer
 
                 
    ```
 
 /**
-    ⚠️USERGE-X userbo kullanımından dolayı; Telegram hesabınız yasaklanabilir.⚠️          
-    Bu açık kaynaklı bir projedir, yaptığınız her işlemden (siz)kendiniz sorumlusunuz. Kesinlikle  yöneticiler sorumluluk kabul etmemektedir.
-    USERGE-X kullanarak bu sorumlulukları kabul etmiş sayılırsınız.
+    ⚠️Kang at your own risk⚠️          
+    Your Telegram account may get banned.
+    I am not responsible for any improper use of this bot
+    This bot is intended for the purpose of having fun with memes,
+    as well as efficiently managing groups.
+    It can help you with managing yourself as well.
+    You ended up spamming groups, getting reported left and right,
+    and then you ended up in a Final Battle with Telegram
+    and at the end the Telegram Team
+    deleted your account?
+    And after that, you pointed your fingers at us
+    for getting your account deleted?
+    We will be rolling on the floor laughing at you.
+    Yes! you heard it right.
 /**
 ```
 
 
-## Gereksinimler 
+## Requirements 
 
-* Python 3.8 veya üstü
-* Telegram [API Anahtarı](https://my.telegram.org/apps)
-* Google Drive [API Anahtarı](https://console.developers.google.com/)
-* MongoDB [Veritabanı URL](https://cloud.mongodb.com/)
+* Python 3.8 or Higher
+* Telegram [API Keys](https://my.telegram.org/apps)
+* Google Drive [API Keys](https://console.developers.google.com/)
+* MongoDB [Database URL](https://cloud.mongodb.com/)
 
-## Nasıl Kurulur
+## How To Deploy 
 
 <p align="center">
-<a href = "https://heroku.com/deploy?template=https://github.com/code-rgb/USERGE-X/tree/alpha"><img src="https://telegra.ph/file/57c4edb389224c9cf9996.png" alt="Kullanım İçin Tıklayın" width="490px"></a></p>
+<a href = "https://heroku.com/deploy?template=https://github.com/code-rgb/USERGE-X/tree/alpha"><img src="https://telegra.ph/file/57c4edb389224c9cf9996.png" alt="Press to Takeoff" width="490px"></a></p>
 <br>
 
 <h3>HEROKU Method</h3>
 
-<b>Önce Yukarıdaki BUTONA tıklayın</b> 
+<b>First click the BUTTON ABOVE</b> 
 
-  > HU_STRING_SESSION değeriniz yoksa, dikkate almayın.
+  > If you don't have HU_STRING_SESSION just ignore it. 
   
-  >Heroku ayarlamalarını tamamladıktan sonra önce uygulamayı kapatın (resources -> turn off) ve konsolda `bash genStr` komutunu çalıştırın (more -> run console). 
+  > After Deployed to Heroku first turn off the app (resources -> turn off) and run `bash genStr` in console (more -> run console). 
   
-  > Bundan sonra string session'u kopyalayın ve Config Vars'a yapıştırın (settings -> reveal config vars). 
+  > After that copy the string session and past it in Config Vars (settings -> reveal config vars). 
   
-  > Son olarak uygulamayı açın ve Logları(kayıtları) kontrol edin (settings -> view logs) :)
+  > Finally turn on the app and check the logs (settings -> view logs) :)
 
-<h3><a href="https://telegra.ph/Other-Method-08-10">Diğer yöntemler</a></h3>
+<h3><a href="https://telegra.ph/Other-Method-08-10">Other Methods</a></h3>
 
 
-<h2>Fork(Klon)'lanmış Repo için kullanım Kılavuzu</h2>
-<a href="https://telegra.ph/Upstream-Userge-Forked-Repo-Guide-07-04"><b>Fork(Klon)'lanmış Repo</b></a>
+<h2>Guide to Upstream Forked Repo</h2>
+<a href="https://telegra.ph/Upstream-Userge-Forked-Repo-Guide-07-04"><b>Upstream Forked Repo</b></a>
 <br>
 <br>
 
-<h3 align="center">Youtube Anlatımı<h3>
+<h3 align="center">Youtube Tutorial<h3>
 <p align="center"><a href="https://youtu.be/M4T_BJvFqkc"><img src="https://i.imgur.com/VVgSk2m.png" width=250px></a>
 </p>
 
-### Proje Geliştiricileri & Emeği geçenler
+### Project Credits 
 
 * [Team Userge](https://github.com/UsergeTeam)
 * [Specially to these projects](https://github.com/UsergeTeam/Userge#inspiration-)
@@ -98,10 +108,10 @@
 * [@BINOD](https://t.me/binod)
 * 🔥 [Pyrogram Assistant](https://github.com/pyrogram/assistant)
 
-### Telif Hakkı & Lisans 
+### Copyright & License 
 
 * Copyright (C) 2020 by [UsergeTeam](https://github.com/UsergeTeam) 
-* [GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007](https://github.com/code-rgb/Userge/blob/master/LICENSE) Standartlarına göre lisanslanmıştır.
+* Licensed under the terms of the [GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007](https://github.com/code-rgb/Userge/blob/master/LICENSE)
 
 
 

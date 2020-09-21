@@ -24,7 +24,7 @@ from ... import client as _client  # pylint: disable=unused-import
 
 _CANCEL_LIST: List[int] = []
 _ERROR_MSG_DELETE_TIMEOUT = 5
-_ERROR_STRING = "**HATA**: `{}`"
+_ERROR_STRING = "**ERROR**: `{}`"
 
 _LOG = logging.getLogger(__name__)
 _LOG_STR = "<<<!  :::::  %s  :::::  !>>>"
