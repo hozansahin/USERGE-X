@@ -34,11 +34,11 @@ _INIT_TASKS: List[asyncio.Task] = []
 _START_TIME = time.time()
 
 
-def _shutdown():
-    _LOG.info(_LOG_STR, 'received stop signal, cancelling tasks...')
+def _shutdown() -> None:
+    _LOG.info(_LOG_STR, 'durdurma  talebi, görevler iptal ediliyor...')
     for task in asyncio.all_tasks():
         task.cancel()
-    _LOG.info(_LOG_STR, 'all tasks cancelled !')
+    _LOG.info(_LOG_STR, 'tüm görevler iptal edildi !')
 
 
 async def _complete_init_tasks() -> None:
@@ -51,10 +51,12 @@ async def _complete_init_tasks() -> None:
 class _AbstractUserge(Methods, RawClient):
     @property
     def is_bot(self) -> bool:
-        """ returns client is bot or not """
+        """ döndüren değer bot mu değil mi"""
         if self._bot is not None:
             return hasattr(self, 'ubot')
-        return bool(Config.BOT_TOKEN)
+        if Config.BOT_TOKEN:
+            return True
+        return False
 
     @property
     def uptime(self) -> str:
@@ -67,7 +69,7 @@ class _AbstractUserge(Methods, RawClient):
 
     async def load_plugin(self, name: str, reload_plugin: bool = False) -> None:
         """ Load plugin to Userge """
-        _LOG.debug(_LOG_STR, f"Importing {name}")
+        _LOG.debug(_LOG_STR, f"{name} İçe aktarılıyor")
         _IMPORTED.append(
             importlib.import_module(f"userge.plugins.{name}"))
         if reload_plugin:
@@ -79,26 +81,26 @@ class _AbstractUserge(Methods, RawClient):
             if asyncio.iscoroutinefunction(plg._init):
                 _INIT_TASKS.append(
                     asyncio.get_event_loop().create_task(plg._init()))
-        _LOG.debug(_LOG_STR, f"Imported {_IMPORTED[-1].__name__} Plugin Successfully")
+        _LOG.debug(_LOG_STR, f"{_IMPORTED[-1].__name__} Eklentisi Başarıyla İçe Aktarıldı")
 
     async def _load_plugins(self) -> None:
         _IMPORTED.clear()
         _INIT_TASKS.clear()
-        logbot.edit_last_msg("Importing All Plugins", _LOG.info, _LOG_STR)
+        logbot.edit_last_msg("Tüm Eklentiler İçe Aktarıldı", _LOG.info, _LOG_STR)
         for name in get_all_plugins():
             try:
                 await self.load_plugin(name)
             except ImportError as i_e:
                 _LOG.error(_LOG_STR, f"[{name}] - {i_e}")
         await self.finalize_load()
-        _LOG.info(_LOG_STR, f"Imported ({len(_IMPORTED)}) Plugins => "
+        _LOG.info(_LOG_STR, f"({len(_IMPORTED)})  => Eklentisi içe aktarıldı "
                   + str([i.__name__ for i in _IMPORTED]))
 
     async def reload_plugins(self) -> int:
         """ Reload all Plugins """
         self.manager.clear_plugins()
         reloaded: List[str] = []
-        _LOG.info(_LOG_STR, "Reloading All Plugins")
+        _LOG.info(_LOG_STR, "Tüm Eklentileri Yeniden Yüklendi")
         for imported in _IMPORTED:
             try:
                 reloaded_ = importlib.reload(imported)
@@ -106,7 +108,7 @@ class _AbstractUserge(Methods, RawClient):
                 _LOG.error(_LOG_STR, i_e)
             else:
                 reloaded.append(reloaded_.__name__)
-        _LOG.info(_LOG_STR, f"Reloaded {len(reloaded)} Plugins => {reloaded}")
+        _LOG.info(_LOG_STR, f" {len(reloaded)} Eklentisi  => {reloaded} Yeniden yüklendi")
         await self.finalize_load()
         return len(reloaded)
 
@@ -114,7 +116,7 @@ class _AbstractUserge(Methods, RawClient):
 class _UsergeBot(_AbstractUserge):
     """ UsergeBot, the bot """
     def __init__(self, **kwargs) -> None:
-        _LOG.info(_LOG_STR, "Setting UsergeBot Configs")
+        _LOG.info(_LOG_STR, "UsergeBot Yapılandırması Ayarlanıyor")
         super().__init__(session_name=":memory:", **kwargs)
 
     @property
@@ -126,7 +128,7 @@ class _UsergeBot(_AbstractUserge):
 class Userge(_AbstractUserge):
     """ Userge, the userbot """
     def __init__(self, **kwargs) -> None:
-        _LOG.info(_LOG_STR, "Setting Userge Configs")
+        _LOG.info(_LOG_STR, "Userge Yapılandırması Ayarlanıyor")
         kwargs = {
             'api_id': Config.API_ID,
             'api_hash': Config.API_HASH,
@@ -146,25 +148,25 @@ class Userge(_AbstractUserge):
         if self._bot is None:
             if Config.BOT_TOKEN:
                 return self
-            raise UsergeBotNotFound("Need BOT_TOKEN ENV!")
+            raise UsergeBotNotFound("BOT_TOKEN ENV gerekiyor!")
         return self._bot
 
     async def start(self) -> None:
         """ start client and bot """
         pool._start()  # pylint: disable=protected-access
-        _LOG.info(_LOG_STR, "Starting Userge")
+        _LOG.info(_LOG_STR, "USERGE-X Başlatılıyor")
         await super().start()
         if self._bot is not None:
-            _LOG.info(_LOG_STR, "Starting UsergeBot")
+            _LOG.info(_LOG_STR, "USERGE-X Bot Başlatılıyor")
             await self._bot.start()
         await self._load_plugins()
 
     async def stop(self) -> None:  # pylint: disable=arguments-differ
         """ stop client and bot """
         if self._bot is not None:
-            _LOG.info(_LOG_STR, "Stopping UsergeBot")
+            _LOG.info(_LOG_STR, "USERGE-X Botunun Durduruluyor")
             await self._bot.stop()
-        _LOG.info(_LOG_STR, "Stopping Userge")
+        _LOG.info(_LOG_STR, "USERGE-X durduruluyor")
         await super().stop()
         await pool._stop()  # pylint: disable=protected-access
 
@@ -174,21 +176,26 @@ class Userge(_AbstractUserge):
         loop.add_signal_handler(signal.SIGHUP, _shutdown)
         loop.add_signal_handler(signal.SIGTERM, _shutdown)
         run = loop.run_until_complete
-        run(self.start())
-        running_tasks: List[asyncio.Task] = []
-        for task in self._tasks:
-            running_tasks.append(loop.create_task(task()))
-        if coro:
-            _LOG.info(_LOG_STR, "Running Coroutine")
-            run(coro)
-        else:
-            _LOG.info(_LOG_STR, "Idling Userge")
-            logbot.edit_last_msg("Userge has Started Successfully !")
-            logbot.end()
-            idle()
-        _LOG.info(_LOG_STR, "Exiting Userge")
-        for task in running_tasks:
-            task.cancel()
-        run(self.stop())
-        run(loop.shutdown_asyncgens())
-        loop.close()
+        try:
+            run(self.start())
+            running_tasks: List[asyncio.Task] = []
+            for task in self._tasks:
+                running_tasks.append(loop.create_task(task()))
+            if coro:
+                _LOG.info(_LOG_STR, "Running Coroutine")
+                run(coro)
+            else:
+                _LOG.info(_LOG_STR, "USERGE-X boşta çalıştırılıyor")
+                logbot.edit_last_msg("USERGE-X  Başlatıldı!")
+                logbot.end()
+                idle()
+            _LOG.info(_LOG_STR, "USERGE-X'ten çıkılıyor")
+            for task in running_tasks:
+                task.cancel()
+            run(self.stop())
+            run(loop.shutdown_asyncgens())
+        except asyncio.exceptions.CancelledError:
+            pass
+        finally:
+            if not loop.is_running():
+                loop.close()

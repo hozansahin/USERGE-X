@@ -21,6 +21,7 @@
 ![PR Closed](https://img.shields.io/github/issues-pr-closed/code-rgb/USERGE-X)
 ![Repo Size](https://img.shields.io/github/repo-size/code-rgb/USERGE-X)
 [![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai)
+[![Telegram](https://img.shields.io/badge/Support%20Group-Telegram-blue)](https://telegram.dog/x_xtests)
 
 <br>
 
@@ -87,22 +88,12 @@
 
 ### Proje Geliştiricileri & Emeği geçenler
 
-* [Team Userge](https://github.com/UsergeTeam)
-* [Specially to these projects](https://github.com/UsergeTeam/Userge#inspiration-)
-* [@uaudIth](https://t.me/uaudIth)
-* [@K_E_N_W_A_Y](https://t.me/K_E_N_W_A_Y)
-* [@nawwasl](https://t.me/nawwasl)
-* [@TharukaN97](https://t.me/TharukaN97)
-* [@Supun97](https://t.me/Supun97)
-* [@gotstc](https://t.me/gotstc)
-* [@BINOD](https://t.me/binod)
-* 🔥 [Pyrogram Assistant](https://github.com/pyrogram/assistant)
+* [Pyrogram Assistant](https://github.com/pyrogram/assistant)
+* [PyroGramBot](https://github.com/SpEcHiDe/PyroGramBot)
+* [PaperPlane](https://github.com/RaphielGang/Telegram-Paperplane)
+* [Uniborg](https://github.com/SpEcHiDe/UniBorg)
 
 ### Telif Hakkı & Lisans 
 
-* Copyright (C) 2020 by [UsergeTeam](https://github.com/UsergeTeam) 
-* [GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007](https://github.com/code-rgb/Userge/blob/master/LICENSE) Standartlarına göre lisanslanmıştır.
+* [GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007](https://github.com/code-rgb/USERGE-X/blob/master/LICENSE) Standartlarına göre lisanslanmıştır.
 
-
-
-<h3 align="center"> >>><a href="https://telegram.dog/x_xtests">  Destek Grubu  </a><<< </h3>
