@@ -18,9 +18,9 @@ trap handleSigInt INT
 initUserge() {
     printLogo
     assertPrerequisites
-    sendMessage "Initializing USERGE-X ..."
+    sendMessage "USERGE-X Yükleniyor ..."
     assertEnvironment
-    editLastMessage "Starting USERGE-X ..."
+    editLastMessage "USERGE-X Başlatılıyor ..."
     printLine
 }
 
@@ -29,19 +29,19 @@ startUserge() {
 }
 
 stopUserge() {
-    sendMessage "Exiting USERGE-X ..."
+    sendMessage "USERGE-X'ten çıkılıyor ..."
     exit 0
 }
 
 handleSigTerm() {
-    log "Exiting With SIGTERM (143) ..."
+    log "SIGTERM (143) Hatası, çıkılıyor ..."
     stopUserge
     endLogBotPolling
     exit 143
 }
 
 handleSigInt() {
-    log "Exiting With SIGINT (130) ..."
+    log "SIGINT (130) Hatası, çıkılıyor ..."
     stopUserge
     endLogBotPolling
     exit 130

@@ -40,11 +40,11 @@ if not os.path.exists(PATH):
     os.mkdir(PATH)
 
 _CATEGORY = {
-    'admin': '🙋🏻‍♂️',
-    'fun': '🎨',
+    'Yönetim': '🙋🏻‍♂️',
+    'Eğlence': '🎨',
     'misc': '🧩',
-    'tools': '🧰',
-    'utils': '🗂',
+    'Araçlar': '🧰',
+    'Gereçler': '🗂',
     'unofficial': '➕',
     'temp': '♻️',
     'plugins': '💎',
