@@ -43,6 +43,8 @@ class Config:
     UNFINISHED_PROGRESS_STR = os.environ.get("UNFINISHED_PROGRESS_STR")
     ALIVE_MEDIA = os.environ.get("ALIVE_MEDIA", None)
     CUSTOM_PACK_NAME = os.environ.get("CUSTOM_PACK_NAME")
+    INSTA_ID = os.environ.get("INSTA_ID")
+    INSTA_PASS = os.environ.get("INSTA_PASS")
     UPSTREAM_REPO = os.environ.get("UPSTREAM_REPO")
     UPSTREAM_REMOTE = os.environ.get("UPSTREAM_REMOTE")
     SCREENSHOT_API = os.environ.get("SCREENSHOT_API", None)
@@ -61,8 +63,6 @@ class Config:
     GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN", None)
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
-    HEROKU_GIT_URL = os.environ.get("HEROKU_GIT_URL", None)
-    BOT_MEDIA = os.environ.get("BOT_MEDIA", None)
     G_DRIVE_IS_TD = os.environ.get("G_DRIVE_IS_TD") == "true"
     LOAD_UNOFFICIAL_PLUGINS = os.environ.get("LOAD_UNOFFICIAL_PLUGINS") == "true"
     THUMB_PATH = DOWN_PATH + "thumb_image.jpg"
@@ -84,6 +84,15 @@ class Config:
         if HEROKU_API_KEY and HEROKU_APP_NAME else None
     STATUS = None
     BOT_FORWARDS = False
+    BOT_MEDIA = os.environ.get("BOT_MEDIA", None)
+    ### Spotify
+    SPOTIFY_CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID', None)
+    SPOTIFY_CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET', None)
+    SPOTIFY_INITIAL_TOKEN = os.environ.get('SPOTIFY_INITIAL_TOKEN', None)
+    SPOTIFY_MODE = False
+    ### MEME Generator 
+    IMGFLIP_ID = os.environ.get('IMGFLIP_ID', None)
+    IMGFLIP_PASS = os.environ.get('IMGFLIP_PASS', None)
 
 
 def get_version() -> str:
@@ -93,11 +102,12 @@ def get_version() -> str:
         if "/code-rgb/userge-x" in Config.UPSTREAM_REPO.lower():
             diff = list(_REPO.iter_commits(f'v{ver}..HEAD'))
             if diff:
-                return f"{ver}-Mystique.{len(diff)}"
+                return f"{ver}-Storm.{len(diff)}"
         else:
             diff = list(_REPO.iter_commits(f'{Config.UPSTREAM_REMOTE}/master..HEAD'))
             if diff:
                 return f"{ver}-fork-[X].{len(diff)}"
-    except:
-        return "Error ! see -> [Fix](https://github.com/code-rgb/USERGE-X/issues/17)"
+    except Exception as e:
+        _LOG.error(e)
+        return "For Fix See -> https://github.com/code-rgb/USERGE-X/issues/17"
     return ver

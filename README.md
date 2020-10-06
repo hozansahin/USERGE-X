@@ -9,7 +9,7 @@
 </p>
 
 <h1>USERGE-X</h1>
-<b>Kullanıcı dostu Telegram UserBot'u</b>
+<b>Kullanıcı Dostu Telegram UserBot'u</b>
 <br>
 <br>
 
@@ -42,7 +42,7 @@
    ```
 
 /**
-    ⚠️USERGE-X userbo kullanımından dolayı; Telegram hesabınız yasaklanabilir.⚠️          
+    ⚠️USERGE-X Userbot kullanımından dolayı; Telegram hesabınız yasaklanabilir.⚠️          
     Bu açık kaynaklı bir projedir, yaptığınız her işlemden (siz)kendiniz sorumlusunuz. Kesinlikle  yöneticiler sorumluluk kabul etmemektedir.
     USERGE-X kullanarak bu sorumlulukları kabul etmiş sayılırsınız.
 /**
@@ -75,6 +75,22 @@
   > Son olarak uygulamayı açın ve Logları(kayıtları) kontrol edin (settings -> view logs) :)
 
 <h3><a href="https://telegra.ph/Other-Method-08-10">Diğer yöntemler</a></h3>
+
+
+### Docker'da çalıştırın 🐳 
+
+1. Docker'ı yükleyin ( [Kurulum](https://docs.docker.com/engine/install/ubuntu/) )
+2. Depoyu klonlayın
+    `git clone https://github.com/code-rgb/USERGE-X.git`
+3. `cd USERGE-X`
+4. Docker image görüntüsünü oluşturun
+    `docker build -t userge .`
+5. `cd ..`
+6. `wget https://raw.githubusercontent.com/code-rgb/USERGE-X/alpha/config.env.sample -O config.env`
+7. Dosyayı açın ve gerekli ayarlamalarını düzenleyicinizde yapın!  
+    `vi config.env`
+8. Son olarak docker container'ı çalıştırın
+    `docker run -dv "$(pwd)/config.env:/app/config.env" USERGE-X`
 
 
 <h2>Fork(Klon)'lanmış Repo için kullanım Kılavuzu</h2>

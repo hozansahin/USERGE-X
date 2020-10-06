@@ -54,9 +54,7 @@ class _AbstractUserge(Methods, RawClient):
         """ döndüren değer bot mu değil mi"""
         if self._bot is not None:
             return hasattr(self, 'ubot')
-        if Config.BOT_TOKEN:
-            return True
-        return False
+        return bool(Config.BOT_TOKEN)
 
     @property
     def uptime(self) -> str:
