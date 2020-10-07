@@ -21,6 +21,7 @@
 ![PR Closed](https://img.shields.io/github/issues-pr-closed/code-rgb/USERGE-X)
 ![Repo Size](https://img.shields.io/github/repo-size/code-rgb/USERGE-X)
 [![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai)
+[![CodeFactor](https://www.codefactor.io/repository/github/code-rgb/userge-x/badge)](https://www.codefactor.io/repository/github/code-rgb/userge-x)
 [![Telegram](https://img.shields.io/badge/Support%20Group-Telegram-blue)](https://telegram.dog/x_xtests)
 
 <br>
@@ -77,23 +78,7 @@
 <h3><a href="https://telegra.ph/Other-Method-08-10">Diğer yöntemler</a></h3>
 
 
-### Docker'da çalıştırın 🐳 
-
-1. Docker'ı yükleyin ( [Kurulum](https://docs.docker.com/engine/install/ubuntu/) )
-2. Depoyu klonlayın
-    `git clone https://github.com/code-rgb/USERGE-X.git`
-3. `cd USERGE-X`
-4. Docker image görüntüsünü oluşturun
-    `docker build -t userge .`
-5. `cd ..`
-6. `wget https://raw.githubusercontent.com/code-rgb/USERGE-X/alpha/config.env.sample -O config.env`
-7. Dosyayı açın ve gerekli ayarlamalarını düzenleyicinizde yapın!  
-    `vi config.env`
-8. Son olarak docker container'ı çalıştırın
-    `docker run -dv "$(pwd)/config.env:/app/config.env" USERGE-X`
-
-
-<h2>Fork(Klon)'lanmış Repo için kullanım Kılavuzu</h2>
+<h2>Fork(Klon)'lanmış Repo için kullanım Kılavuzuo</h2>
 <a href="https://telegra.ph/Upstream-Userge-Forked-Repo-Guide-07-04"><b>Fork(Klon)'lanmış Repo</b></a>
 <br>
 <br>
