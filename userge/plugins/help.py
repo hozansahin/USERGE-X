@@ -40,15 +40,15 @@ if not os.path.exists(PATH):
     os.mkdir(PATH)
 
 _CATEGORY = {
-    'Yönetim': '🙋🏻‍♂️',
-    'Eğlence': '🎨',
+    'admin': '🙋🏻‍♂️',
+    'fun': '🎨',
     'misc': '🧩',
-    'Araçlar': '🧰',
-    'Gereçler': '🗂',
+    'tools': '🧰',
+    'utils': '🗂',
     'unofficial': '➕',
     'temp': '♻️',
     'plugins': '💎',
-    'bot' : '🔰' 
+    'bot' : '💠' 
 }
 # Database
 SAVED_SETTINGS = get_collection("CONFIGS")
