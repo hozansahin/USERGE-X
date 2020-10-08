@@ -27,18 +27,11 @@ from html_telegraph_poster import TelegraphPoster
 import re
 import urllib
 from userge.plugins.fun.stylish import font_gen
+from pymediainfo import MediaInfo
+from .misc.redditdl import reddit_thumb_link
 
 MEDIA_TYPE, MEDIA_URL = None, None
-
-
-FONT_NAMES = ['serif', 'sans', 'sans_i', 'serif_i', 'medi_b', 'medi', 'double', 'cursive_b', 'cursive', 'bigsmall', 'reverse', 'circle', 'circle_b', 'mono', 'square_b', 'square', 'smoth', 'goth', 'wierd_a', 'x', 'cross', 'wierd_b', 'slash', 'uline', 'doubleuline', 'wide', 'web', 'weeb', 'weeeb']
-
-
 PATH = "userge/xcache"
-
-if not os.path.exists(PATH):
-    os.mkdir(PATH)
-
 _CATEGORY = {
     'admin': '🙋🏻‍♂️',
     'fun': '🎨',
@@ -52,10 +45,7 @@ _CATEGORY = {
 }
 # Database
 SAVED_SETTINGS = get_collection("CONFIGS")
-
 BUTTON_BASE = get_collection("TEMP_BUTTON") # TODO use json cache
-
-
 REPO_X = InlineQueryResultArticle(
                     title="Repo",
                     input_message_content=InputTextMessageContent(
@@ -76,10 +66,6 @@ REPO_X = InlineQueryResultArticle(
                         ]]
                     )
             )
-
- 
-
-
 # Thanks boi @FLAMEPOSEIDON
 ALIVE_IMGS = ["https://telegra.ph/file/11123ef7dff2f1e19e79d.jpg", "https://i.imgur.com/uzKdTXG.jpg",
 "https://telegra.ph/file/6ecab390e4974c74c3764.png",
@@ -477,12 +463,12 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                     match = re.search(subreddit_regex, str_y[1])
                     if match:
                         subreddit_name = match.group(1)
-                        reddit_api += f"{subreddit_name}/15"
+                        reddit_api += f"{subreddit_name}/30"
                     else:
                         return
 
                 else:
-                    reddit_api += "15"
+                    reddit_api += "30"
 
                 cn = requests.get(reddit_api)
                 r = cn.json()
@@ -513,6 +499,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                             captionx = f"<b>{title}</b>\n"
                             captionx += f"`Posted by u/{author}`\n"
                             captionx += f"↕️ <code>{upvote}</code>\n"
+                            thumbnail = reddit_thumb_link(post['preview'])
                             if post['spoiler']:
                                 captionx += "⚠️ Post marked as SPOILER\n"
                             if post['nsfw']:
@@ -524,6 +511,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                                 results.append(
                                         InlineQueryResultAnimation(
                                             animation_url=media_url,
+                                            thumb_url=thumbnail,
                                             caption=captionx,
                                             reply_markup=InlineKeyboardMarkup(buttons)
                                         )
@@ -532,6 +520,7 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                                 results.append(
                                         InlineQueryResultPhoto(
                                             photo_url=media_url,
+                                            thumb_url=thumbnail,
                                             caption=captionx,
                                             reply_markup=InlineKeyboardMarkup(buttons)
                                         )
@@ -815,12 +804,4 @@ if Config.BOT_TOKEN and Config.OWNER_ID:
                         switch_pm_text="🔒 SECRETS",
                         switch_pm_parameter="start"
                     )
-                    return
-        else:
-            results.append(REPO_X)
-        try:
-            if len(results) != 0:
-                await inline_query.answer(results=results, cache_time=1)
-        except MessageEmpty:
-            return
-        
+                            
