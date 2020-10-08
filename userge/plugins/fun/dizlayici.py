@@ -23,7 +23,7 @@ from userge import userge, Message, Config
 
 
 @userge.on_cmd(
-    ""dizla"", about={
+    "dizla", about={
         'header': "Stikır çıkartmaları dızlar 🤠",
         'usage': "Bir çıkartmaya {tr}dizla [emoji (ler)] [paket numarası] yazın veya  "
                  "fotoğraf göndermen gerek!",
