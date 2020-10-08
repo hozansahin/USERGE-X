@@ -23,14 +23,14 @@ from userge import userge, Message, Config
 
 
 @userge.on_cmd(
-    "kang", about={
+    "dizla", about={
         'header': "Stikır çıkartmaları dızlar 🤠",
-        'usage': "Bir çıkartmaya {tr}kang [emoji (ler)] [paket numarası] yazın veya  "
+        'usage': "Bir çıkartmaya {tr}dizla [emoji (ler)] [paket numarası] yazın veya  "
                  "fotoğraf göndermen gerek!",
-        'examples': ["{tr}kang", "{tr}kang 🤔", "{tr}kang 2", "{tr}kang 🤠 2"]},
+        'examples': ["{tr}dizla", "{tr}dizla 🤔", "{tr}dizla 2", "{tr}dizla 🤠 2"]},
     allow_channels=False, allow_via_bot=False)
 async def kang_(message: Message):
-    """ Stikır dızla """
+    """ Stikır dızlar """
     user = await userge.get_me()
     replied = message.reply_to_message
     photo = None
@@ -75,19 +75,19 @@ async def kang_(message: Message):
         if emoji_ and emoji_ not in emoji.UNICODE_EMOJI:
             emoji_ = None
         if not emoji_:
-            emoji_ = "🤔"
+            emoji_ = "🤠"
 
         u_name = user.username
         u_name = "@" + u_name if u_name else user.first_name or user.id
-        packname = f"a{user.id}_by_userge_{pack}"
-        custom_packnick = Config.CUSTOM_PACK_NAME or f"{u_name}'s kang pack"
+        packname = f"a{user.id}_by_dizci_{pack}"
+        custom_packnick = Config.CUSTOM_PACK_NAME or f"{u_name} Çıkartma Paketi"
         packnick = f"{custom_packnick} Vol.{pack}"
         cmd = '/newpack'
         if resize:
             photo = resize_photo(photo)
         if is_anim:
             packname += "_anim"
-            packnick += " (Animated)"
+            packnick += " (Hareketli)"
             cmd = '/newanimated'
         async with aiohttp.ClientSession() as ses:
             async with ses.get(f'http://t.me/addstickers/{packname}') as res:
@@ -98,7 +98,7 @@ async def kang_(message: Message):
                 try:
                     await conv.send_message('/addsticker')
                 except YouBlockedUser:
-                    await message.edit('first **unblock** @Stickers')
+                    await message.edit('İlk önce @Stickers **Engelini** Kaldırın')
                     return
                 await conv.get_response(mark_read=True)
                 await conv.send_message(packname)
@@ -106,16 +106,16 @@ async def kang_(message: Message):
                 limit = "50" if is_anim else "120"
                 while limit in msg.text:
                     pack += 1
-                    packname = f"a{user.id}_by_userge_{pack}"
+                    packname = f"a{user.id}_by_dizci_{pack}"
                     packnick = f"{custom_packnick} Vol.{pack}"
                     if is_anim:
                         packname += "_anim"
-                        packnick += " (Animated)"
-                    await message.edit("`Switching to Pack " + str(pack) +
-                                       " due to insufficient space`")
+                        packnick += " (Hareketli)"
+                    await message.edit("`Yetersiz alan nedeniyle " + str(pack) +
+                                       "Paketine Geçiliyor`")
                     await conv.send_message(packname)
                     msg = await conv.get_response(mark_read=True)
-                    if msg.text == "Invalid pack selected.":
+                    if msg.text == "Geçersiz paket seçildi.":
                         await conv.send_message(cmd)
                         await conv.get_response(mark_read=True)
                         await conv.send_message(packnick)
@@ -134,15 +134,15 @@ async def kang_(message: Message):
                         await conv.send_message(packname)
                         await conv.get_response(mark_read=True)
                         await message.edit(
-                            f"`Sticker added in a Different Pack !\n"
-                            "This Pack is Newly created!\n"
-                            f"Your pack can be found [here](t.me/addstickers/{packname})")
+                            f"`Çıkartma Farklı bir Pakete ekleniyor!\n"
+                            "Bu Paket Yeni Oluşturuldu!\n"
+                            f"Paketiniz [Burada](t.me/addstickers/{packname}) bulunabilir!")
                         return
                 await conv.send_document(photo)
                 rsp = await conv.get_response(mark_read=True)
-                if "Sorry, the file type is invalid." in rsp.text:
-                    await message.edit("`Failed to add sticker, use` @Stickers "
-                                       "`bot to add the sticker manually.`")
+                if "Üzgünüm, dosya türü geçersiz." in rsp.text:
+                    await message.edit("`Çıkartma eklenemedi, ` @Stickers"
+                                       "`manuel olarak eklemek için bot.`")
                     return
                 await conv.send_message(emoji_)
                 await conv.get_response(mark_read=True)
@@ -154,16 +154,16 @@ async def kang_(message: Message):
                 try:
                     await conv.send_message(cmd)
                 except YouBlockedUser:
-                    await message.edit('first **unblock** @Stickers')
+                    await message.edit('İlk önce @Stickers **Engelini** Kaldırın')
                     return
                 await conv.get_response(mark_read=True)
                 await conv.send_message(packnick)
                 await conv.get_response(mark_read=True)
                 await conv.send_document(photo)
                 rsp = await conv.get_response(mark_read=True)
-                if "Sorry, the file type is invalid." in rsp.text:
-                    await message.edit("`Failed to add sticker, use` @Stickers "
-                                       "`bot to add the sticker manually.`")
+                if "Üzgünüm, dosya türü geçersiz." in rsp.text:
+                    await message.edit("`Çıkartma eklenemedi, ` @Stickers "
+                                       "`manuel olarak eklemek için bot.`")
                     return
                 await conv.send_message(emoji_)
                 await conv.get_response(mark_read=True)
@@ -188,7 +188,7 @@ async def sticker_pack_info_(message: Message):
     """ çıkartma paket bilgisini al """
     replied = message.reply_to_message
     if not replied:
-        await message.edit("`Hiçbir şeyden bilgi alamıyorum, değil mi?`")
+        await message.edit("`Hiçbir şeyden bilgi alamıyorsun, değil mi?`")
         return
     if not replied.sticker:
         await message.edit("`Paket bilgisini almak için bir çıkartmayı yanıtlayın`")
@@ -214,7 +214,7 @@ async def sticker_pack_info_(message: Message):
 
 
 def resize_photo(photo: str) -> io.BytesIO:
-    """ Resize the given photo to 512x512 """
+    """ Verilen fotoğrafı 512x512 olarak yeniden boyutlandırıyor """
     image = Image.open(photo)
     maxsize = 512
     scale = maxsize / max(image.width, image.height)
