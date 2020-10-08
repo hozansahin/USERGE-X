@@ -23,7 +23,7 @@ from userge import userge, Message, Config
 
 
 @userge.on_cmd(
-    "dizla", about={
+    ""dizla"", about={
         'header': "Stikır çıkartmaları dızlar 🤠",
         'usage': "Bir çıkartmaya {tr}dizla [emoji (ler)] [paket numarası] yazın veya  "
                  "fotoğraf göndermen gerek!",
@@ -55,7 +55,7 @@ async def kang_(message: Message):
         else:
             await message.edit("`Desteklenmeyen dosya!`")
             return
-        await message.edit(f"`{random.choice(KANGING_STR)}`")
+        await message.edit(f"`{random.choice(BY_DIZCI)}`")
         photo = await userge.download_media(message=replied,
                                             file_name=Config.DOWN_PATH)
     else:
@@ -227,7 +227,7 @@ def resize_photo(photo: str) -> io.BytesIO:
     return resized_photo
 
 
-KANGING_STR = (
+BY_DIZCI = (
     "Çıkartmayı dızlıyorum...",
     "Yaşasın dızcılık...",
     "Bu çıkartmayı kendi paketime davet ediyorum...",
