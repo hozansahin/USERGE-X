@@ -17,7 +17,7 @@ import aiohttp
 from PIL import Image
 from pyrogram.raw.functions.messages import GetStickerSet
 from pyrogram.raw.types import InputStickerSetShortName
-from pyrogram.errors.exceptions.bad_request_400 import YouBlockedUser
+from pyrogram.errors import YouBlockedUser
 
 from userge import userge, Message, Config
 
@@ -25,9 +25,13 @@ from userge import userge, Message, Config
 @userge.on_cmd(
     "dizla", about={
         'header': "Stikır çıkartmaları dızlar 🤠",
+        'flags': {
+            '-s': "without link",
+            '-d': "without trace"},
         'usage': "Bir çıkartmaya {tr}dizla [emoji (ler)] [paket numarası] yazın veya  "
                  "fotoğraf göndermen gerek!",
-        'examples': ["{tr}dizla", "{tr}dizla 🤔", "{tr}dizla 2", "{tr}dizla 🤠 2"]},
+        'examples': ["{tr}dizla", "{tr}dizla 🤔", "{tr}dizla -s",
+        "{tr}dizla -d", "{tr}dizla 2", "{tr}dizla 🤠 2"]},
     allow_channels=False, allow_via_bot=False)
 async def kang_(message: Message):
     """ Stikır dızlar """
@@ -62,7 +66,7 @@ async def kang_(message: Message):
         await message.edit("`Bunu Dızlayamam...`")
         return
     if photo:
-        args = message.input_str.split()
+        args = message.filtered_input_str.split()
         pack = 1
         if len(args) == 2:
             emoji_, pack = args
@@ -78,7 +82,10 @@ async def kang_(message: Message):
             emoji_ = "🤠"
 
         u_name = user.username
-        u_name = "@" + u_name if u_name else user.first_name or user.id
+        if u_name:
+            u_name = "@" + u_name
+        else:
+            u_name = user.first_name or user.id
         packname = f"a{user.id}_by_dizci_{pack}"
         custom_packnick = Config.CUSTOM_PACK_NAME or f"{u_name} Çıkartma Paketi"
         packnick = f"{custom_packnick} Vol.{pack}"
@@ -133,10 +140,12 @@ async def kang_(message: Message):
                         await conv.get_response(mark_read=True)
                         await conv.send_message(packname)
                         await conv.get_response(mark_read=True)
-                        await message.edit(
-                            f"`Çıkartma Farklı bir Pakete ekleniyor!\n"
-                            "Bu Paket Yeni Oluşturuldu!\n"
-                            f"Paketiniz [Burada](t.me/addstickers/{packname}) bulunabilir!")
+                        if '-d' in message.flags:
+                            await message.delete()
+                        else:
+                            out = "__kanged__" if '-s' in message.flags else \
+                                f"[Burada](t.me/addstickers/{packname})"
+                            await message.edit(f"**Diğer Paketiniz** {out} __ bulunabilir__**!**")
                         return
                 await conv.send_document(photo)
                 rsp = await conv.get_response(mark_read=True)
@@ -176,7 +185,12 @@ async def kang_(message: Message):
                 await conv.get_response(mark_read=True)
                 await conv.send_message(packname)
                 await conv.get_response(mark_read=True)
-        await message.edit(f"**Stikır dızlandı** [Burada](t.me/addstickers/{packname}) **Bulabilirsin!**")
+        if '-d' in message.flags:
+            await message.delete()
+        else:
+            out = "__kanged__" if '-s' in message.flags else \
+                f"[Burada](t.me/addstickers/{packname})"
+            await message.edit(f"**Stikır dızlandı** {out}**Bulabilirsin!**")
         if os.path.exists(str(photo)):
             os.remove(photo)
 
