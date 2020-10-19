@@ -26,10 +26,11 @@ pyrogram>=1.0.7
 pySmartDL
 python-dotenv
 pytz
+PyYAML
 rarfile
 removebg
 requests
-git+https://github.com/bisoncorps/search-engine-parser
+search-engine-parser==0.6.2
 selenium==3.141.0
 setuptools>=40.3.0
 spamwatch

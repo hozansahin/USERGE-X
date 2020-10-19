@@ -93,8 +93,11 @@ class Config:
     ### MEME Generator 
     IMGFLIP_ID = os.environ.get('IMGFLIP_ID', None)
     IMGFLIP_PASS = os.environ.get('IMGFLIP_PASS', None)
-    ALLOW_NSFW = os.environ.get("ALLOW_NSFW", "False") 
-
+    ALLOW_NSFW = os.environ.get("ALLOW_NSFW", "False")
+    pmlog_grp = os.environ.get("PM_LOG_GROUP_ID")
+    PM_LOG_GROUP_ID = int(pmlog_grp) if pmlog_grp else None
+    PM_LOGGING = False
+    
 
 def get_version() -> str:
     """ get userge version """
